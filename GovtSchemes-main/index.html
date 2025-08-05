@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriConnect - Government Schemes & Crop Calendar</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-seedling"></i>
+                    <span>AgriConnect</span>
+                </div>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#home" class="nav-link active" data-section="home">Home</a>
+                    <a href="#schemes" class="nav-link" data-section="schemes">Schemes</a>
+                    <a href="#calendar" class="nav-link" data-section="calendar">Crop Calendar</a>
+                    <a href="#contact" class="nav-link" data-section="contact">Contact</a>
+                </div>
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero section active">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to AgriConnect</h1>
+                <p class="hero-subtitle">Your comprehensive platform for government agricultural schemes and crop planning</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="showSection('schemes')">
+                        <i class="fas fa-file-alt"></i>
+                        Explore Schemes
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSection('calendar')">
+                        <i class="fas fa-calendar-alt"></i>
+                        Crop Calendar
+                    </button>
+                    <button class="btn btn-tertiary" onclick="showSection('contact')">
+                        <i class="fas fa-phone"></i>
+                        Emergency Help
+                    </button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-illustration">
+                    <i class="fas fa-tractor"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search for schemes, benefits, or keywords...">
+                    <button class="search-btn" onclick="filterSchemes()">Search</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schemes Section -->
+    <section id="schemes" class="schemes-section section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Government Schemes for Farmers</h2>
+                <p class="section-subtitle">Comprehensive support programs designed to enhance agricultural productivity and farmer welfare</p>
+            </div>
+            
+            <div class="schemes-grid" id="schemesGrid">
+                <!-- Schemes will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Crop Calendar Section -->
+    <section id="calendar" class="calendar-section section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Crop Calendar</h2>
+                <p class="section-subtitle">Plan your farming activities with our comprehensive crop calendar</p>
+            </div>
+
+            <div class="calendar-controls">
+                <div class="control-group">
+                    <label for="cropSelect">Select Crop:</label>
+                    <select id="cropSelect" class="form-select">
+                        <option value="all">All Crops</option>
+                        <option value="rice">Rice</option>
+                        <option value="wheat">Wheat</option>
+                        <option value="cotton">Cotton</option>
+                        <option value="sugarcane">Sugarcane</option>
+                        <option value="maize">Maize</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="seasonSelect">Select Season:</label>
+                    <select id="seasonSelect" class="form-select">
+                        <option value="all">All Seasons</option>
+                        <option value="kharif">Kharif</option>
+                        <option value="rabi">Rabi</option>
+                        <option value="zaid">Zaid</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Emergency Contacts</h2>
+                <p class="section-subtitle">Important helpline numbers for farmers</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <i class="fas fa-phone-alt"></i>
+                    <h3>Kisan Call Center</h3>
+                    <p>24/7 Agricultural Helpline</p>
+                    <a href="tel:1551" class="contact-number">1551</a>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-ambulance"></i>
+                    <h3>Emergency Services</h3>
+                    <p>Medical Emergency</p>
+                    <a href="tel:108" class="contact-number">108</a>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Police Helpline</h3>
+                    <p>Emergency Police Services</p>
+                    <a href="tel:100" class="contact-number">100</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">12 Cr+</h3>
+                        <p class="stat-label">Farmers Benefited</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">₹2.8 Lakh Cr</h3>
+                        <p class="stat-label">Total Investment</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">25%</h3>
+                        <p class="stat-label">Income Increase</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number">600+</h3>
+                        <p class="stat-label">Districts Covered</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-seedling"></i>
+                        <span>Farmer Schemes Portal</span>
+                    </div>
+                    <p class="footer-description">
+                        Connecting farmers with government schemes and support programs across India.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#schemes">All Schemes</a></li>
+                        <li><a href="#" onclick="openModal('eligibility')">Eligibility Check</a></li>
+                        <li><a href="#" onclick="openModal('application')">How to Apply</a></li>
+                        <li><a href="#" onclick="openModal('faq')">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="tel:1551">Kisan Call Center: 1551</a></li>
+                        <li><a href="mailto:support@farmer.gov.in">support@farmer.gov.in</a></li>
+                        <li><a href="#" onclick="openModal('helpdesk')">Help Desk</a></li>
+                        <li><a href="#" onclick="openModal('feedback')">Feedback</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3 class="footer-title">Government Portals</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://www.india.gov.in" target="_blank">India.gov.in</a></li>
+                        <li><a href="https://agricoop.nic.in" target="_blank">Ministry of Agriculture</a></li>
+                        <li><a href="https://pmkisan.gov.in" target="_blank">PM-KISAN</a></li>
+                        <li><a href="https://www.pmfby.gov.in" target="_blank">PMFBY</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p>&copy; 2025 Government of India. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="#" onclick="openModal('privacy')">Privacy Policy</a>
+                        <a href="#" onclick="openModal('terms')">Terms of Service</a>
+                        <a href="#" onclick="openModal('accessibility')">Accessibility</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- Scheme Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Scheme Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Crop Calendar Modal -->
+    <div id="cropModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="cropModalTitle">Crop Details</h2>
+                <span class="close" onclick="closeCropModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="cropModalBody">
+                <!-- Crop details will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading schemes...</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

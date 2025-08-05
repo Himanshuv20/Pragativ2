@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriGuru 4.0 - Manual Startup Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .step h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        
+        .command {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .copy-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        
+        .copy-btn:hover {
+            background: #45a049;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .urls {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .urls h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        
+        .url-link {
+            display: block;
+            color: #1976d2;
+            text-decoration: none;
+            padding: 8px 0;
+            font-weight: bold;
+        }
+        
+        .url-link:hover {
+            text-decoration: underline;
+        }
+        
+        .troubleshoot {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .troubleshoot h3 {
+            color: #c62828;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 AgriGuru 4.0 - Manual Startup Guide</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> Follow these steps in order to start the AgriGuru 4.0 application with chatbot integration.
+        </div>
+        
+        <div class="step">
+            <h3>Step 1: Open Command Prompt or PowerShell</h3>
+            <p>Press <kbd>Win + R</kbd>, type <code>cmd</code> or <code>powershell</code>, and press Enter.</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Start Backend Server</h3>
+            <p>Navigate to the backend directory and start the server:</p>
+            <div class="command">
+                cd "c:\Users\himan\Hackathon\CropCalendar4.0\backend"
+                <button class="copy-btn" onclick="copyToClipboard('cd &quot;c:\\Users\\himan\\Hackathon\\CropCalendar4.0\\backend&quot;')">Copy</button>
+            </div>
+            <div class="command">
+                node server.js
+                <button class="copy-btn" onclick="copyToClipboard('node server.js')">Copy</button>
+            </div>
+            <p><strong>Expected output:</strong> You should see messages about mandi data collection and services initializing.</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Start Frontend Server (New Terminal)</h3>
+            <p>Open a <strong>new</strong> command prompt/PowerShell window and run:</p>
+            <div class="command">
+                cd "c:\Users\himan\Hackathon\CropCalendar4.0\frontend"
+                <button class="copy-btn" onclick="copyToClipboard('cd &quot;c:\\Users\\himan\\Hackathon\\CropCalendar4.0\\frontend&quot;')">Copy</button>
+            </div>
+            <div class="command">
+                npm start
+                <button class="copy-btn" onclick="copyToClipboard('npm start')">Copy</button>
+            </div>
+            <p><strong>Expected:</strong> React development server will start and automatically open the browser.</p>
+        </div>
+        
+        <div class="success">
+            <h3>✅ Once Both Servers Are Running:</h3>
+            <p>You'll have access to the following URLs:</p>
+        </div>
+        
+        <div class="urls">
+            <h3>🔗 Application URLs</h3>
+            <a href="http://localhost:3000" class="url-link" target="_blank">
+                🚀 Frontend Application: http://localhost:3000
+            </a>
+            <a href="http://localhost:5000" class="url-link" target="_blank">
+                🔧 Backend API: http://localhost:5000
+            </a>
+            <a href="file:///c:/Users/himan/Hackathon/CropCalendar4.0/chatbot-test.html" class="url-link" target="_blank">
+                🤖 Chatbot Test Interface: chatbot-test.html
+            </a>
+            <a href="file:///c:/Users/himan/Hackathon/CropCalendar4.0/app-status.html" class="url-link" target="_blank">
+                📊 Status Dashboard: app-status.html
+            </a>
+        </div>
+        
+        <div class="step">
+            <h3>Step 4: Test the Chatbot</h3>
+            <p>Once both servers are running, you can:</p>
+            <ul>
+                <li>Open the frontend app and look for the chatbot button (bottom-right corner)</li>
+                <li>Use the standalone chatbot test interface</li>
+                <li>Try queries like:
+                    <ul>
+                        <li>"Show me crop calendar for wheat"</li>
+                        <li>"What's the weather forecast?"</li>
+                        <li>"Current mandi prices"</li>
+                        <li>"Help with plant disease"</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="troubleshoot">
+            <h3>🔧 Troubleshooting</h3>
+            
+            <h4>If Backend Won't Start:</h4>
+            <ul>
+                <li>Check if Node.js is installed: <code>node --version</code></li>
+                <li>Install dependencies: <code>npm install</code> in backend folder</li>
+                <li>Check if port 5000 is free: <code>netstat -ano | findstr :5000</code></li>
+            </ul>
+            
+            <h4>If Frontend Won't Start:</h4>
+            <ul>
+                <li>Install dependencies: <code>npm install</code> in frontend folder</li>
+                <li>Check if port 3000 is free: <code>netstat -ano | findstr :3000</code></li>
+                <li>Try: <code>npm run build</code> then <code>npm start</code></li>
+            </ul>
+            
+            <h4>If Chatbot Doesn't Respond:</h4>
+            <ul>
+                <li>Ensure backend server is running on port 5000</li>
+                <li>Check browser console for errors (F12)</li>
+                <li>Test direct API: <a href="http://localhost:5000/api/chatbot/intents" target="_blank">http://localhost:5000/api/chatbot/intents</a></li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>Step 5: Quick Batch Files (Alternative)</h3>
+            <p>You can also use the provided batch files:</p>
+            <div class="command">
+                Double-click: start-backend.bat
+                <button class="copy-btn" onclick="openFile('c:\\Users\\himan\\Hackathon\\CropCalendar4.0\\start-backend.bat')">Open</button>
+            </div>
+            <div class="command">
+                Double-click: start-frontend.bat
+                <button class="copy-btn" onclick="openFile('c:\\Users\\himan\\Hackathon\\CropCalendar4.0\\start-frontend.bat')">Open</button>
+            </div>
+        </div>
+        
+        <div class="success">
+            <h3>🎉 What You'll Get:</h3>
+            <ul>
+                <li><strong>Full React Application</strong> with agricultural modules</li>
+                <li><strong>AI Chatbot Integration</strong> with natural language processing</li>
+                <li><strong>Real-time Data</strong> from government APIs</li>
+                <li><strong>Pest Disease Analysis</strong> with image upload</li>
+                <li><strong>Weather Forecasts</strong> and crop recommendations</li>
+                <li><strong>Market Prices</strong> from live mandi data</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Copied to clipboard!');
+            });
+        }
+        
+        function openFile(path) {
+            // This won't work in browser due to security restrictions
+            alert('Please navigate to the file manually: ' + path);
+        }
+        
+        // Check if servers are running
+        async function checkServers() {
+            try {
+                const backendResponse = await fetch('http://localhost:5000', { mode: 'no-cors' });
+                console.log('Backend server detected');
+            } catch (e) {
+                console.log('Backend server not running');
+            }
+            
+            try {
+                const frontendResponse = await fetch('http://localhost:3000', { mode: 'no-cors' });
+                console.log('Frontend server detected');
+            } catch (e) {
+                console.log('Frontend server not running');
+            }
+        }
+        
+        // Check servers on page load
+        setTimeout(checkServers, 2000);
+    </script>
+</body>
+</html>

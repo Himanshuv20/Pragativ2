@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAGATI.ai - Holistic System Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #27ae60;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .description {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .tech-item {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #c8e6c9;
+        }
+        .tech-item h4 {
+            color: #2e7d32;
+            margin: 0 0 10px 0;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+        }
+        .feature-item h4 {
+            color: #e65100;
+            margin: 0 0 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 PRAGATI.ai - Holistic System Architecture</h1>
+        
+        <div class="description">
+            <h3>📋 System Overview</h3>
+            <p><strong>PRAGATI.ai</strong> is an advanced agricultural intelligence platform that combines real-time satellite data, AI-powered recommendations, and comprehensive farming services to provide personalized crop calendars and agricultural guidance to farmers across India.</p>
+            <p>The system integrates multiple data sources including Copernicus Sentinel-2 satellite imagery, weather APIs, government schemes, mandi price data, multilingual AI chatbots, and machine learning models to deliver intelligent farming recommendations with 12+ Indian language support.</p>
+        </div>
+
+        <h2>🏗️ High-Level System Architecture</h2>
+        <div class="mermaid">
+graph TB
+    subgraph "External APIs & Data Sources"
+        COPERNICUS[🛰️ Copernicus Sentinel-2<br/>Satellite Data & OAuth2]
+        WEATHER[🌤️ OpenWeather API<br/>Weather & Climate Data]
+        MANDI[📊 AGMARKNET & Data.gov.in<br/>Live Mandi Price Data]
+        GOV[🏛️ Government APIs<br/>Schemes & Subsidies]
+        AI[🤖 Hugging Face & OpenAI<br/>AI Models & Translation]
+        GOOGLE[🌐 Google Cloud<br/>Translation Services]
+    end
+
+    subgraph "Frontend Layer (React/TypeScript)"
+        WEB[🌐 Web Application<br/>React 18 + Material-UI]
+        MOBILE[� Responsive Design<br/>5-Column Grid Layout]
+        PWA[� Progressive Web App<br/>Offline Capabilities]
+        LANG[🗣️ Multilingual Interface<br/>12+ Indian Languages]
+    end
+
+    subgraph "Backend Services (Node.js/Express)"
+        API[🚀 Express API Server<br/>RESTful Services]
+        AUTH[🔐 Authentication<br/>JWT & OAuth2]
+        
+        subgraph "Core Agricultural Services"
+            CROP[🌾 Crop Calendar Service<br/>Personalized Schedules]
+            SOIL[🔬 Soil Analysis Service<br/>Health Assessment]
+            SAT[🛰️ Satellite Data Service<br/>NDVI & Moisture Analysis]
+            WEATHER_SVC[🌤️ Weather Service<br/>Forecasting & Alerts]
+            AI_SVC[🤖 AI Recommendation Service<br/>ML-Powered Insights]
+            MANDI_SVC[📈 Mandi Data Service<br/>Price Prediction & Trends]
+        end
+        
+        subgraph "Support Services"
+            SOS[🚨 SOS Emergency Service<br/>Crisis Management]
+            DEBT[💰 Debt Counseling Service<br/>Financial Advisory]
+            SCHEME[🏛️ Government Schemes<br/>Subsidy Information]
+            SUSTAIN[♻️ Sustainable Practices<br/>Eco-Friendly Farming]
+            CHATBOT[💬 Multilingual Chatbot<br/>24/7 Agricultural Support]
+            TRANSLATE[🌐 Translation Service<br/>Real-time Language Support]
+        end
+    end
+
+    subgraph "Data Layer"
+        CROP_DB[(🗃️ Crop Database<br/>57+ Crop Varieties)]
+        ML_MODEL[(🎯 ML Models<br/>Price & Yield Prediction)]
+        CACHE[(⚡ In-Memory Cache<br/>OAuth2 & Data Cache)]
+        TRAINING[(📊 Training Data<br/>10,000+ Market Records)]
+    end
+
+    subgraph "Integration & Security Layer"
+        OAUTH[🔑 OAuth2 Integration<br/>Copernicus Authentication]
+        SCRAPER[🕷️ Web Scraping Engine<br/>Real-time Market Data]
+        VALIDATOR[✅ Data Validation<br/>Input Sanitization]
+        MIDDLEWARE[🛡️ Security Middleware<br/>CORS, Helmet, Rate Limiting]
+    end
+
+    %% Frontend Connections
+    WEB --> API
+    MOBILE --> API
+    PWA --> API
+    LANG --> TRANSLATE
+
+    %% API Connections to Core Services
+    API --> AUTH
+    API --> CROP
+    API --> SOIL
+    API --> SAT
+    API --> WEATHER_SVC
+    API --> AI_SVC
+    API --> MANDI_SVC
+
+    %% API Connections to Support Services
+    API --> SOS
+    API --> DEBT
+    API --> SCHEME
+    API --> SUSTAIN
+    API --> CHATBOT
+    API --> TRANSLATE
+
+    %% Service to Data Connections
+    CROP --> CROP_DB
+    SOIL --> SAT
+    SAT --> OAUTH
+    MANDI_SVC --> ML_MODEL
+    MANDI_SVC --> SCRAPER
+    MANDI_SVC --> TRAINING
+    AUTH --> CACHE
+    AI_SVC --> ML_MODEL
+
+    %% External API Connections
+    SAT --> COPERNICUS
+    WEATHER_SVC --> WEATHER
+    MANDI_SVC --> MANDI
+    SCHEME --> GOV
+    AI_SVC --> AI
+    CHATBOT --> AI
+    TRANSLATE --> GOOGLE
+    TRANSLATE --> AI
+
+    %% Integration Layer Connections
+    OAUTH --> COPERNICUS
+    SCRAPER --> MANDI
+    VALIDATOR --> API
+    MIDDLEWARE --> API
+
+    %% Styling
+    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef backend fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef data fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef integration fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+
+    class WEB,MOBILE,PWA,LANG frontend
+    class API,AUTH,CROP,SOIL,SAT,WEATHER_SVC,AI_SVC,MANDI_SVC,SOS,DEBT,SCHEME,SUSTAIN,CHATBOT,TRANSLATE backend
+    class COPERNICUS,WEATHER,MANDI,GOV,AI,GOOGLE external
+    class CROP_DB,ML_MODEL,CACHE,TRAINING data
+    class OAUTH,SCRAPER,VALIDATOR,MIDDLEWARE integration
+        </div>
+
+        <h2>🛠️ Technology Stack</h2>
+        <div class="tech-stack">
+            <div class="tech-item">
+                <h4>Frontend</h4>
+                <p>React 18, TypeScript, Material-UI, React Router, Axios, Moment.js</p>
+            </div>
+            <div class="tech-item">
+                <h4>Backend</h4>
+                <p>Node.js, Express.js, CORS, Helmet, Morgan, dotenv</p>
+            </div>
+            <div class="tech-item">
+                <h4>Data Integration</h4>
+                <p>Copernicus API, OpenWeather API, AGMARKNET Scraping, Hugging Face</p>
+            </div>
+            <div class="tech-item">
+                <h4>Authentication</h4>
+                <p>JWT Tokens, OAuth2, bcrypt, express-validator</p>
+            </div>
+            <div class="tech-item">
+                <h4>Data Storage</h4>
+                <p>JSON Database, In-Memory Caching, ML Model Storage</p>
+            </div>
+            <div class="tech-item">
+                <h4>Development</h4>
+                <p>Webpack, Babel, ESLint, Prettier, VS Code</p>
+            </div>
+        </div>
+
+        <h2>🚀 Key System Features</h2>
+        <div class="features">
+            <div class="feature-item">
+                <h4>🌾 Intelligent Crop Calendars</h4>
+                <p>AI-powered personalized crop calendars with satellite data integration</p>
+            </div>
+            <div class="feature-item">
+                <h4>🛰️ Real-time Satellite Data</h4>
+                <p>Live Copernicus Sentinel-2 imagery for vegetation and soil analysis</p>
+            </div>
+            <div class="feature-item">
+                <h4>🔬 Soil Analysis</h4>
+                <p>Comprehensive soil health assessment with crop recommendations</p>
+            </div>
+            <div class="feature-item">
+                <h4>📈 Live Market Data</h4>
+                <p>Real-time mandi prices with ML-based price prediction</p>
+            </div>
+            <div class="feature-item">
+                <h4>🌤️ Weather Integration</h4>
+                <p>Location-based weather forecasting and agricultural alerts</p>
+            </div>
+            <div class="feature-item">
+                <h4>🚨 Emergency SOS</h4>
+                <p>Emergency agricultural advisory and disaster management</p>
+            </div>
+            <div class="feature-item">
+                <h4>💰 Financial Counseling</h4>
+                <p>Debt management and financial advisory for farmers</p>
+            </div>
+            <div class="feature-item">
+                <h4>🏛️ Government Schemes</h4>
+                <p>Access to government agricultural schemes and subsidies</p>
+            </div>
+            <div class="feature-item">
+                <h4>♻️ Sustainable Practices</h4>
+                <p>Eco-friendly farming recommendations and practices</p>
+            </div>
+            <div class="feature-item">
+                <h4>🤖 AI Recommendations</h4>
+                <p>Machine learning powered agricultural insights and advice</p>
+            </div>
+        </div>
+
+        <h2>🔄 Data Flow Architecture</h2>
+        <div class="mermaid">
+sequenceDiagram
+    participant U as 👨‍🌾 Farmer
+    participant F as 🌐 Frontend
+    participant P as 🔄 Proxy
+    participant A as 🚀 API Server
+    participant S as 🔬 Services
+    participant E as 🛰️ External APIs
+    participant D as 🗃️ Database
+
+    U->>F: Access Application
+    F->>P: API Request
+    P->>A: Forward Request
+    A->>S: Service Call
+    
+    alt Real-time Data Required
+        S->>E: Fetch Live Data
+        E-->>S: Return Data
+    else Cached Data Available
+        S->>D: Query Cache
+        D-->>S: Return Cached Data
+    end
+    
+    S->>D: Store/Update Data
+    S-->>A: Return Processed Data
+    A-->>P: JSON Response
+    P-->>F: Forward Response
+    F-->>U: Display Results
+        </div>
+
+        <div class="description">
+            <h3>🎯 System Architecture Benefits</h3>
+            <ul>
+                <li><strong>Scalability:</strong> Microservices architecture allows independent scaling of components</li>
+                <li><strong>Reliability:</strong> Graceful fallback mechanisms for external API failures</li>
+                <li><strong>Security:</strong> JWT authentication, CORS, Helmet security, input validation</li>
+                <li><strong>Performance:</strong> Caching layer, optimized API calls, static file serving</li>
+                <li><strong>Maintainability:</strong> Clean separation of concerns, modular service design</li>
+                <li><strong>Integration:</strong> RESTful APIs, standardized data formats, OAuth2 authentication</li>
+            </ul>
+        </div>
+
+        <div class="description">
+            <h3>📊 System Metrics & Capabilities</h3>
+            <ul>
+                <li><strong>Data Sources:</strong> 4+ External APIs, 10,000+ ML training samples</li>
+                <li><strong>Crop Database:</strong> 50+ crop varieties with detailed growth data</li>
+                <li><strong>Geographic Coverage:</strong> GPS-based location services, satellite imagery</li>
+                <li><strong>Real-time Processing:</strong> Live satellite data, weather updates, market prices</li>
+                <li><strong>AI Integration:</strong> Machine learning models, natural language processing</li>
+                <li><strong>Multi-platform:</strong> Web application, mobile responsive, PWA capabilities</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#4caf50',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#27ae60',
+                lineColor: '#34495e',
+                sectionBkgColor: '#f8f9fa',
+                altSectionBkgColor: '#e8f5e8',
+                gridColor: '#bdc3c7',
+                secondaryColor: '#e3f2fd',
+                tertiaryColor: '#fff3e0'
+            }
+        });
+    </script>
+</body>
+</html>

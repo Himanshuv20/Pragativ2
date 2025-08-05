@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        .details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Geolocation API Test</h1>
+        <p>This page tests whether the Geolocation API is working in your browser and environment.</p>
+        
+        <div id="support-info">
+            <h3>📋 Browser Support Check</h3>
+            <div id="support-status"></div>
+        </div>
+        
+        <div id="environment-info">
+            <h3>🌐 Environment Information</h3>
+            <div class="details" id="env-details"></div>
+        </div>
+        
+        <div id="test-section">
+            <h3>📍 Location Test</h3>
+            <button id="get-location" onclick="getLocation()">Get Current Location</button>
+            <div id="location-status"></div>
+            <div id="location-details"></div>
+        </div>
+        
+        <div id="permissions-info">
+            <h3>🔐 Permissions Information</h3>
+            <div id="permissions-status"></div>
+        </div>
+    </div>
+
+    <script>
+        let locationButton = document.getElementById('get-location');
+        let statusDiv = document.getElementById('location-status');
+        let detailsDiv = document.getElementById('location-details');
+        
+        // Check browser support
+        function checkSupport() {
+            const supportDiv = document.getElementById('support-status');
+            
+            if ('geolocation' in navigator) {
+                supportDiv.innerHTML = '<div class="status success">✅ Geolocation API is supported</div>';
+            } else {
+                supportDiv.innerHTML = '<div class="status error">❌ Geolocation API is not supported</div>';
+                locationButton.disabled = true;
+            }
+        }
+        
+        // Show environment info
+        function showEnvironmentInfo() {
+            const envDiv = document.getElementById('env-details');
+            const info = `Protocol: ${window.location.protocol}
+Host: ${window.location.hostname}
+Port: ${window.location.port}
+Full URL: ${window.location.href}
+User Agent: ${navigator.userAgent}
+Secure Context: ${window.isSecureContext}
+Cookie Enabled: ${navigator.cookieEnabled}`;
+            envDiv.textContent = info;
+        }
+        
+        // Check permissions
+        async function checkPermissions() {
+            const permDiv = document.getElementById('permissions-status');
+            
+            try {
+                if (navigator.permissions) {
+                    const permission = await navigator.permissions.query({name: 'geolocation'});
+                    let statusClass = 'info';
+                    let icon = '❓';
+                    
+                    switch(permission.state) {
+                        case 'granted':
+                            statusClass = 'success';
+                            icon = '✅';
+                            break;
+                        case 'denied':
+                            statusClass = 'error';
+                            icon = '❌';
+                            break;
+                        case 'prompt':
+                            statusClass = 'info';
+                            icon = '❓';
+                            break;
+                    }
+                    
+                    permDiv.innerHTML = `<div class="status ${statusClass}">${icon} Permission state: ${permission.state}</div>`;
+                    
+                    // Listen for permission changes
+                    permission.onchange = () => {
+                        checkPermissions();
+                    };
+                } else {
+                    permDiv.innerHTML = '<div class="status info">❓ Permissions API not available</div>';
+                }
+            } catch (error) {
+                permDiv.innerHTML = `<div class="status error">❌ Error checking permissions: ${error.message}</div>`;
+            }
+        }
+        
+        // Get current location
+        function getLocation() {
+            console.log('🚀 Getting location...');
+            statusDiv.innerHTML = '<div class="status info">📍 Getting your location...</div>';
+            detailsDiv.innerHTML = '';
+            locationButton.disabled = true;
+            
+            const startTime = Date.now();
+            
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 300000
+            };
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    
+                    console.log('✅ Location success:', position);
+                    statusDiv.innerHTML = '<div class="status success">✅ Location retrieved successfully!</div>';
+                    
+                    const details = `Latitude: ${position.coords.latitude}
+Longitude: ${position.coords.longitude}
+Accuracy: ±${Math.round(position.coords.accuracy)} meters
+Altitude: ${position.coords.altitude || 'Not available'}
+Altitude Accuracy: ${position.coords.altitudeAccuracy || 'Not available'}
+Heading: ${position.coords.heading || 'Not available'}
+Speed: ${position.coords.speed || 'Not available'}
+Timestamp: ${new Date(position.timestamp).toLocaleString()}
+Time taken: ${duration}ms`;
+                    
+                    detailsDiv.innerHTML = `<div class="details">${details}</div>`;
+                    locationButton.disabled = false;
+                },
+                function(error) {
+                    const endTime = Date.now();
+                    const duration = endTime - startTime;
+                    
+                    console.error('❌ Location error:', error);
+                    
+                    let errorMessage = 'Unknown error';
+                    let troubleshooting = '';
+                    
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'User denied the request for Geolocation.';
+                            troubleshooting = 'Please allow location access in your browser settings and try again.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information is unavailable.';
+                            troubleshooting = 'This could be due to poor GPS signal or network issues. Try again in a few moments.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'The request to get user location timed out.';
+                            troubleshooting = 'The location request took too long. Try again with a stable internet connection.';
+                            break;
+                        default:
+                            errorMessage = `Unknown error occurred: ${error.message}`;
+                            break;
+                    }
+                    
+                    statusDiv.innerHTML = `<div class="status error">❌ ${errorMessage}</div>`;
+                    
+                    const errorDetails = `Error Code: ${error.code}
+Error Message: ${error.message}
+Time taken: ${duration}ms
+Troubleshooting: ${troubleshooting}`;
+                    
+                    detailsDiv.innerHTML = `<div class="details">${errorDetails}</div>`;
+                    locationButton.disabled = false;
+                },
+                options
+            );
+        }
+        
+        // Initialize page
+        window.onload = function() {
+            checkSupport();
+            showEnvironmentInfo();
+            checkPermissions();
+        };
+    </script>
+</body>
+</html>

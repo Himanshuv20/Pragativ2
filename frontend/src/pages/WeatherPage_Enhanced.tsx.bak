@@ -1,0 +1,1074 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Paper,
+  Button,
+  CircularProgress,
+  Alert,
+  Chip,
+  Tab,
+  Tabs,
+  IconButton,
+  Divider,
+  Stack,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Autocomplete,
+  Fab,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
+import {
+  CalendarToday,
+  TrendingUp,
+  ArrowUpward,
+  ArrowDownward,
+  MyLocation,
+  Edit,
+  WbTwilight
+} from '@mui/icons-material';
+import { CropCalendarAPI } from '../services/api';
+import { WeatherThemeProvider } from '../theme/WeatherThemeProvider';
+import {
+  WeatherSunnyIcon,
+  WeatherCloudyIcon,
+  WeatherRainyIcon,
+  WeatherStormyIcon,
+  WeatherSnowyIcon,
+  LocationIcon,
+  RefreshIcon,
+  TemperatureIcon,
+  HumidityIcon,
+  WindIcon,
+  VisibilityIcon,
+  SearchIcon
+} from '../components/icons/AppIcons';
+
+interface WeatherData {
+  current?: any;
+  forecast?: any;
+  metadata?: any;
+}
+
+interface LocationData {
+  latitude: number;
+  longitude: number;
+  name?: string;
+  country?: string;
+  state?: string;
+}
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+// Popular cities for quick selection
+const POPULAR_CITIES = [
+  { name: 'Delhi', country: 'India', latitude: 28.6139, longitude: 77.2090 },
+  { name: 'Mumbai', country: 'India', latitude: 19.0760, longitude: 72.8777 },
+  { name: 'Bangalore', country: 'India', latitude: 12.9716, longitude: 77.5946 },
+  { name: 'Chennai', country: 'India', latitude: 13.0827, longitude: 80.2707 },
+  { name: 'Kolkata', country: 'India', latitude: 22.5726, longitude: 88.3639 },
+  { name: 'Hyderabad', country: 'India', latitude: 17.3850, longitude: 78.4867 },
+  { name: 'Pune', country: 'India', latitude: 18.5204, longitude: 73.8567 },
+  { name: 'Ahmedabad', country: 'India', latitude: 23.0225, longitude: 72.5714 }
+];
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`weather-tabpanel-${index}`}
+      aria-labelledby={`weather-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: { xs: 1.5, sm: 2, md: 3 } }}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+const WeatherPage: React.FC = () => {
+  // Responsive design hooks
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const [weatherData, setWeatherData] = useState<WeatherData>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tabValue, setTabValue] = useState(0);
+  const [location, setLocation] = useState<LocationData>({ 
+    latitude: 28.6139, 
+    longitude: 77.2090, 
+    name: 'Delhi',
+    country: 'India'
+  });
+  const [locationDialogOpen, setLocationDialogOpen] = useState(false);
+  const [gettingLocation, setGettingLocation] = useState(false);
+  const [customLatitude, setCustomLatitude] = useState('');
+  const [customLongitude, setCustomLongitude] = useState('');
+  const [selectedCity, setSelectedCity] = useState<any>(null);
+
+  useEffect(() => {
+    // Try to get user's current location on component mount
+    getCurrentLocation();
+  }, []);
+
+  useEffect(() => {
+    if (location.latitude && location.longitude) {
+      fetchWeatherData();
+    }
+  }, [location]);
+
+  const getCurrentLocation = () => {
+    setGettingLocation(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({
+            latitude,
+            longitude,
+            name: 'Current Location',
+            country: ''
+          });
+          setGettingLocation(false);
+        },
+        (error) => {
+          console.warn('❌ Geolocation error:', error.message);
+          setGettingLocation(false);
+          // Keep default location (Delhi) if geolocation fails
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        }
+      );
+    } else {
+      console.warn('❌ Geolocation not supported');
+      setGettingLocation(false);
+    }
+  };
+
+  const fetchWeatherData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await CropCalendarAPI.getComprehensiveWeatherData(
+        location.latitude,
+        location.longitude,
+        15 // Get 15-day forecast
+      );
+      
+      setWeatherData(response);
+      
+    } catch (err: any) {
+      console.error('Error fetching weather data:', err);
+      setError(err.message || 'Failed to fetch weather data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
+  const handleLocationDialogOpen = () => {
+    setLocationDialogOpen(true);
+    setCustomLatitude(location.latitude.toString());
+    setCustomLongitude(location.longitude.toString());
+    setSelectedCity(POPULAR_CITIES.find(city => 
+      Math.abs(city.latitude - location.latitude) < 0.1 && 
+      Math.abs(city.longitude - location.longitude) < 0.1
+    ) || null);
+  };
+
+  const handleLocationDialogClose = () => {
+    setLocationDialogOpen(false);
+    setCustomLatitude('');
+    setCustomLongitude('');
+    setSelectedCity(null);
+  };
+
+  const handleCitySelect = (city: any) => {
+    if (city) {
+      setLocation({
+        latitude: city.latitude,
+        longitude: city.longitude,
+        name: city.name,
+        country: city.country
+      });
+      setLocationDialogOpen(false);
+    }
+  };
+
+  const handleCustomLocationSet = () => {
+    const lat = parseFloat(customLatitude);
+    const lon = parseFloat(customLongitude);
+    
+    if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      alert('Please enter valid coordinates (Latitude: -90 to 90, Longitude: -180 to 180)');
+      return;
+    }
+    
+    setLocation({
+      latitude: lat,
+      longitude: lon,
+      name: 'Custom Location',
+      country: ''
+    });
+    setLocationDialogOpen(false);
+  };
+
+  const getWeatherIcon = (iconCode: string, size: 'small' | 'medium' | 'large' = 'medium') => {
+    const iconSize = size === 'small' ? 24 : size === 'medium' ? 32 : 48;
+    const iconProps = { 
+      sx: { 
+        fontSize: iconSize,
+        filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
+        transition: 'all 0.3s ease'
+      } 
+    };
+    
+    switch (iconCode?.slice(0, 2)) {
+      case '01': return <WeatherSunnyIcon {...iconProps} />;
+      case '02': return <WeatherCloudyIcon {...iconProps} />;
+      case '03':
+      case '04': return <WeatherCloudyIcon {...iconProps} />;
+      case '09':
+      case '10': return <WeatherRainyIcon {...iconProps} />;
+      case '11': return <WeatherStormyIcon {...iconProps} />;
+      case '13': return <WeatherSnowyIcon {...iconProps} />;
+      default: return <WeatherSunnyIcon {...iconProps} />;
+    }
+  };
+
+  const formatTemperature = (temp: number) => `${Math.round(temp)}°C`;
+
+  const getCurrentWeatherCard = () => {
+    if (!weatherData.current) {
+      return (
+        <Card sx={{ 
+          background: `linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)`,
+          mb: 3,
+          borderRadius: 3
+        }}>
+          <CardContent sx={{ textAlign: 'center', py: 4 }}>
+            <CircularProgress sx={{ color: '#1976D2' }} />
+            <Typography variant="h6" sx={{ mt: 2, color: '#1565C0' }}>
+              Loading weather data...
+            </Typography>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    const current = weatherData.current;
+    
+    return (
+      <Card sx={{ 
+        background: `linear-gradient(135deg, 
+          rgba(33, 150, 243, 0.9) 0%, 
+          rgba(30, 136, 229, 0.95) 50%, 
+          rgba(21, 101, 192, 1) 100%)`,
+        color: '#ffffff',
+        mb: 4,
+        borderRadius: 4,
+        boxShadow: '0 12px 40px rgba(33, 150, 243, 0.3)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+          opacity: 0.1,
+          pointerEvents: 'none'
+        }
+      }}>
+        <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between', 
+            alignItems: { xs: 'flex-start', sm: 'center' }, 
+            mb: 3,
+            gap: 2
+          }}>
+            <Box sx={{ flex: 1 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1.5, 
+                mb: 2,
+                flexWrap: 'wrap'
+              }}>
+                <LocationIcon sx={{ fontSize: 24, opacity: 0.9 }} />
+                <Typography variant="h5" sx={{ 
+                  fontWeight: 700,
+                  textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                }}>
+                  {current.location?.name || location.name || 'Unknown Location'}
+                </Typography>
+                {current.location?.country && (
+                  <Chip 
+                    label={current.location.country}
+                    size="small"
+                    sx={{
+                      bgcolor: 'rgba(255,255,255,0.2)',
+                      color: 'white',
+                      fontWeight: 600,
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255,255,255,0.3)'
+                    }}
+                  />
+                )}
+              </Box>
+              
+              <Typography variant="body2" sx={{ 
+                opacity: 0.8, 
+                mb: 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
+              }}>
+                🌍 {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
+              </Typography>
+              
+              <Typography variant="body2" sx={{ 
+                opacity: 0.8, 
+                mb: 3,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1
+              }}>
+                ⏰ Last updated: {new Date(current.lastUpdated || Date.now()).toLocaleTimeString()}
+              </Typography>
+              
+              {/* Main Weather Display */}
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 3, 
+                mb: 3
+              }}>
+                <Box sx={{ 
+                  '& .weather-icon': {
+                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                    transform: 'scale(1.2)'
+                  }
+                }}>
+                  {getWeatherIcon(current.weather?.icon || '01d', 'large')}
+                </Box>
+                <Box>
+                  <Typography variant="h2" sx={{ 
+                    fontWeight: 800, 
+                    lineHeight: 1,
+                    textShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                    background: 'linear-gradient(45deg, #ffffff 30%, #e3f2fd 90%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent'
+                  }}>
+                    {formatTemperature(current.current?.temperature || 0)}
+                  </Typography>
+                  <Typography variant="h6" sx={{ 
+                    opacity: 0.9, 
+                    textTransform: 'capitalize',
+                    fontWeight: 500,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                  }}>
+                    {current.weather?.description || current.weather?.main || 'Loading...'}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+            
+            <IconButton 
+              onClick={fetchWeatherData} 
+              disabled={loading}
+              sx={{ 
+                color: 'white', 
+                bgcolor: 'rgba(255,255,255,0.15)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                '&:hover': {
+                  bgcolor: 'rgba(255,255,255,0.25)',
+                  transform: 'scale(1.05)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
+              <RefreshIcon sx={{ 
+                animation: loading ? 'spin 1s linear infinite' : 'none',
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' }
+                }
+              }} />
+            </IconButton>
+          </Box>
+
+          {/* Weather Stats Grid */}
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: 'repeat(2, 1fr)', sm: 'repeat(4, 1fr)' }, 
+            gap: 2 
+          }}>
+            <Box sx={{ 
+              textAlign: 'center',
+              p: 2,
+              borderRadius: 2,
+              bgcolor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.2)',
+                transform: 'translateY(-2px)'
+              }
+            }}>
+              <TemperatureIcon sx={{ fontSize: 28, mb: 1, opacity: 0.9, color: '#FF7043' }} />
+              <Typography variant="body2" sx={{ 
+                opacity: 0.8, 
+                fontSize: '0.75rem', 
+                textTransform: 'uppercase', 
+                fontWeight: 600 
+              }}>
+                Feels Like
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {formatTemperature(current.current?.feelsLike || 0)}
+              </Typography>
+            </Box>
+            
+            <Box sx={{ 
+              textAlign: 'center',
+              p: 2,
+              borderRadius: 2,
+              bgcolor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.2)',
+                transform: 'translateY(-2px)'
+              }
+            }}>
+              <HumidityIcon sx={{ fontSize: 28, mb: 1, opacity: 0.9, color: '#42A5F5' }} />
+              <Typography variant="body2" sx={{ opacity: 0.8, fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                Humidity
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {current.current?.humidity || 0}%
+              </Typography>
+            </Box>
+            
+            <Box sx={{ 
+              textAlign: 'center',
+              p: 2,
+              borderRadius: 2,
+              bgcolor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.2)',
+                transform: 'translateY(-2px)'
+              }
+            }}>
+              <WindIcon sx={{ fontSize: 28, mb: 1, opacity: 0.9, color: '#66BB6A' }} />
+              <Typography variant="body2" sx={{ opacity: 0.8, fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                Wind
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {current.wind?.speed || 0} km/h
+              </Typography>
+            </Box>
+            
+            <Box sx={{ 
+              textAlign: 'center',
+              p: 2,
+              borderRadius: 2,
+              bgcolor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                bgcolor: 'rgba(255,255,255,0.2)',
+                transform: 'translateY(-2px)'
+              }
+            }}>
+              <VisibilityIcon sx={{ fontSize: 28, mb: 1, opacity: 0.9, color: '#AB47BC' }} />
+              <Typography variant="body2" sx={{ opacity: 0.8, fontSize: '0.75rem', textTransform: 'uppercase', fontWeight: 600 }}>
+                Visibility
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                {current.current?.visibility || 0} km
+              </Typography>
+            </Box>
+          </Box>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const getForecastCards = (days: number) => {
+    if (!weatherData.forecast?.forecast) {
+      return (
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <CircularProgress sx={{ color: '#1976D2' }} />
+          <Typography variant="body1" sx={{ mt: 2, color: '#1565C0' }}>
+            Loading forecast data...
+          </Typography>
+        </Box>
+      );
+    }
+
+    const forecastData = weatherData.forecast.forecast.slice(0, days);
+
+    return (
+      <Box sx={{ 
+        display: 'grid', 
+        gridTemplateColumns: { 
+          xs: '1fr', 
+          sm: 'repeat(2, 1fr)', 
+          md: 'repeat(3, 1fr)', 
+          lg: 'repeat(4, 1fr)', 
+          xl: 'repeat(5, 1fr)' 
+        }, 
+        gap: 2 
+      }}>
+        {forecastData.map((day: any, index: number) => (
+          <Card key={day.date || index} sx={{ 
+            height: '100%',
+            borderRadius: 2,
+            transition: 'all 0.3s ease',
+            background: 'linear-gradient(135deg, #E3F2FD 0%, #FFFFFF 100%)',
+            border: '1px solid rgba(33, 150, 243, 0.2)',
+            '&:hover': {
+              transform: 'translateY(-4px)',
+              boxShadow: '0 8px 25px rgba(33, 150, 243, 0.2)',
+              borderColor: 'rgba(33, 150, 243, 0.4)'
+            }
+          }}>
+            <CardContent sx={{ p: 2.5 }}>
+              <Typography variant="subtitle2" sx={{ 
+                fontWeight: 600, 
+                mb: 1, 
+                color: '#1565C0',
+                fontSize: '0.875rem'
+              }}>
+                {index === 0 ? 'Today' : new Date(day.date).toLocaleDateString('en-US', { 
+                  weekday: 'short', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              </Typography>
+              
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                mb: 2 
+              }}>
+                {getWeatherIcon(day.weather?.icon || '01d', 'medium')}
+              </Box>
+              
+              <Typography variant="caption" sx={{ 
+                display: 'block', 
+                textAlign: 'center', 
+                mb: 2, 
+                textTransform: 'capitalize',
+                color: 'text.secondary',
+                fontSize: '0.75rem'
+              }}>
+                {day.weather?.description || 'Clear'}
+              </Typography>
+              
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                mb: 2 
+              }}>
+                <Typography variant="h6" sx={{ 
+                  fontWeight: 700, 
+                  color: '#D32F2F',
+                  fontSize: '1.25rem'
+                }}>
+                  {formatTemperature(day.temperature?.max || 0)}
+                </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: '#1976D2',
+                  fontSize: '0.875rem'
+                }}>
+                  {formatTemperature(day.temperature?.min || 0)}
+                </Typography>
+              </Box>
+              
+              <Stack spacing={1}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    Humidity
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                    {day.humidity || 0}%
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                    Wind
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                    {day.windSpeed || 0} km/h
+                  </Typography>
+                </Box>
+                
+                {day.precipitation > 0 && (
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                      Rain
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: '#1976D2' }}>
+                      {day.precipitation} mm
+                    </Typography>
+                  </Box>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    );
+  };
+
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
+          <CircularProgress size={60} sx={{ color: '#1976D2', mb: 3 }} />
+          <Typography variant="h6" sx={{ mb: 1, color: '#1565C0' }}>
+            Loading Weather Data...
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Getting latest weather information for your location
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
+
+  return (
+    <WeatherThemeProvider>
+      <Container maxWidth="xl" sx={{ 
+        py: 4,
+        px: 3,
+        minHeight: '100vh',
+        background: `linear-gradient(135deg, 
+          rgba(227, 242, 253, 0.8) 0%, 
+          rgba(187, 222, 251, 0.9) 25%,
+          rgba(144, 202, 249, 0.8) 50%, 
+          rgba(100, 181, 246, 0.9) 75%,
+          rgba(66, 165, 245, 0.95) 100%)`,
+        position: 'relative',
+        '&::before': {
+          content: '""',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3Ccircle cx="10" cy="10" r="2"/%3E%3Ccircle cx="50" cy="10" r="2"/%3E%3Ccircle cx="10" cy="50" r="2"/%3E%3Ccircle cx="50" cy="50" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+          opacity: 0.5,
+          pointerEvents: 'none',
+          zIndex: 0
+        }
+      }}>
+        {/* Hero Header */}
+        <Box sx={{ 
+          textAlign: 'center', 
+          mb: 5,
+          position: 'relative',
+          zIndex: 1
+        }}>
+          <Typography variant={isMobile ? 'h4' : 'h2'} sx={{ 
+            fontWeight: 800,
+            background: `linear-gradient(135deg, #1565C0 0%, #1976D2 50%, #42A5F5 100%)`,
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 2,
+            textShadow: '0 4px 12px rgba(33, 150, 243, 0.3)',
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1
+          }}>
+            ☀️ Weather Insights
+          </Typography>
+          <Typography variant="h6" sx={{ 
+            color: 'rgba(21, 101, 192, 0.8)',
+            fontWeight: 500,
+            maxWidth: 700,
+            mx: 'auto',
+            opacity: 0.9,
+            lineHeight: 1.6
+          }}>
+            Real-time weather data and forecasts to help you plan your agricultural activities
+          </Typography>
+        </Box>
+
+        {error && (
+          <Alert 
+            severity="error" 
+            sx={{ 
+              mb: 3, 
+              borderRadius: 3,
+              backgroundColor: 'rgba(244, 67, 54, 0.1)',
+              border: '1px solid rgba(244, 67, 54, 0.2)',
+              position: 'relative',
+              zIndex: 1
+            }}
+          >
+            {error}
+          </Alert>
+        )}
+
+        {/* Current Weather Card */}
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          {getCurrentWeatherCard()}
+        </Box>
+
+        {/* Navigation Tabs */}
+        <Box sx={{ 
+          borderBottom: 1, 
+          borderColor: 'rgba(66, 165, 245, 0.2)', 
+          mb: 4,
+          position: 'sticky',
+          top: 0,
+          bgcolor: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(20px)',
+          zIndex: 10,
+          borderRadius: '16px 16px 0 0',
+          overflow: 'hidden',
+          boxShadow: '0 4px 20px rgba(33, 150, 243, 0.1)',
+          border: '1px solid rgba(66, 165, 245, 0.15)'
+        }}>
+          <Tabs 
+            value={tabValue} 
+            onChange={handleTabChange}
+            variant={isMobile ? "scrollable" : "fullWidth"}
+            scrollButtons={isMobile ? "auto" : false}
+            sx={{
+              '& .MuiTab-root': {
+                textTransform: 'none',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                minHeight: 60,
+                py: 2,
+                px: 3.5,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                color: 'rgba(21, 101, 192, 0.7)',
+                '&:hover': {
+                  bgcolor: 'rgba(33, 150, 243, 0.06)',
+                  color: '#1976d2',
+                  transform: 'translateY(-1px)'
+                },
+                '&.Mui-selected': {
+                  color: '#1565C0',
+                  fontWeight: 700
+                }
+              },
+              '& .MuiTabs-indicator': {
+                height: 4,
+                borderRadius: '4px 4px 0 0',
+                background: `linear-gradient(90deg, #42A5F5 0%, #1E88E5 50%, #1565C0 100%)`,
+                boxShadow: '0 2px 8px rgba(33, 150, 243, 0.3)'
+              }
+            }}
+          >
+            <Tab 
+              label="3-Day Forecast" 
+              icon={<CalendarToday />} 
+              iconPosition="start"
+            />
+            <Tab 
+              label="7-Day Outlook" 
+              icon={<TrendingUp />} 
+              iconPosition="start"
+            />
+            <Tab 
+              label="15-Day Extended" 
+              icon={<CalendarToday />} 
+              iconPosition="start"
+            />
+          </Tabs>
+        </Box>
+
+        {/* Tab Panels */}
+        <Box sx={{ position: 'relative', zIndex: 1 }}>
+          <TabPanel value={tabValue} index={0}>
+            <Typography variant="h5" sx={{ 
+              mb: 4, 
+              fontWeight: 700,
+              color: '#1565C0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5
+            }}>
+              📅 3-Day Forecast
+            </Typography>
+            {getForecastCards(3)}
+          </TabPanel>
+
+          <TabPanel value={tabValue} index={1}>
+            <Typography variant="h5" sx={{ 
+              mb: 4, 
+              fontWeight: 700,
+              color: '#1565C0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5
+            }}>
+              📊 7-Day Outlook
+            </Typography>
+            {getForecastCards(7)}
+          </TabPanel>
+
+          <TabPanel value={tabValue} index={2}>
+            <Typography variant="h5" sx={{ 
+              mb: 4, 
+              fontWeight: 700,
+              color: '#1565C0',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1.5
+            }}>
+              🔮 15-Day Extended Forecast
+            </Typography>
+            {getForecastCards(15)}
+          </TabPanel>
+        </Box>
+
+        {/* Location Selection Dialog */}
+        <Dialog 
+          open={locationDialogOpen} 
+          onClose={handleLocationDialogClose}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: 4,
+              background: `linear-gradient(135deg, rgba(227, 242, 253, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)`,
+              backdropFilter: 'blur(30px)',
+              border: '1px solid rgba(66, 165, 245, 0.2)',
+              boxShadow: '0 20px 60px rgba(33, 150, 243, 0.15)'
+            }
+          }}
+        >
+          <DialogTitle sx={{ 
+            textAlign: 'center', 
+            pb: 1,
+            background: `linear-gradient(135deg, #1565C0 0%, #1976D2 100%)`,
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 700
+          }}>
+            📍 Choose Location
+          </DialogTitle>
+          <DialogContent sx={{ pt: 3 }}>
+            <Stack spacing={4}>
+              {/* Popular Cities */}
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: '#1565C0' }}>
+                  🏙️ Popular Cities
+                </Typography>
+                <Autocomplete
+                  options={POPULAR_CITIES}
+                  getOptionLabel={(option) => `${option.name}, ${option.country}`}
+                  value={selectedCity}
+                  onChange={(event, value) => {
+                    setSelectedCity(value);
+                    if (value) handleCitySelect(value);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Search Cities"
+                      variant="outlined"
+                      placeholder="Type to search..."
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#42A5F5'
+                          }
+                        }
+                      }}
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: <SearchIcon sx={{ mr: 1, color: '#1976D2' }} />
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+
+              <Divider sx={{ borderColor: 'rgba(66, 165, 245, 0.2)' }} />
+
+              {/* Custom Coordinates */}
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: '#1565C0' }}>
+                  🌐 Custom Coordinates
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2 }}>
+                  <TextField
+                    label="Latitude"
+                    type="number"
+                    value={customLatitude}
+                    onChange={(e) => setCustomLatitude(e.target.value)}
+                    placeholder="e.g., 28.6139"
+                    inputProps={{ step: 0.0001, min: -90, max: 90 }}
+                    helperText="Range: -90 to 90"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2
+                      }
+                    }}
+                  />
+                  <TextField
+                    label="Longitude"
+                    type="number"
+                    value={customLongitude}
+                    onChange={(e) => setCustomLongitude(e.target.value)}
+                    placeholder="e.g., 77.2090"
+                    inputProps={{ step: 0.0001, min: -180, max: 180 }}
+                    helperText="Range: -180 to 180"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2
+                      }
+                    }}
+                  />
+                </Box>
+                <Button
+                  onClick={handleCustomLocationSet}
+                  variant="outlined"
+                  startIcon={<SearchIcon />}
+                  fullWidth
+                  disabled={!customLatitude || !customLongitude}
+                  sx={{
+                    borderRadius: 2,
+                    py: 1.2,
+                    borderColor: '#42A5F5',
+                    color: '#1976D2',
+                    '&:hover': {
+                      borderColor: '#1976D2',
+                      bgcolor: 'rgba(33, 150, 243, 0.04)'
+                    }
+                  }}
+                >
+                  Use Custom Coordinates
+                </Button>
+              </Box>
+
+              <Divider sx={{ borderColor: 'rgba(66, 165, 245, 0.2)' }} />
+
+              {/* Current Location Option */}
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2, color: '#1565C0' }}>
+                  📱 Device Location
+                </Typography>
+                <Button
+                  onClick={() => {
+                    getCurrentLocation();
+                    setLocationDialogOpen(false);
+                  }}
+                  variant="outlined"
+                  startIcon={gettingLocation ? <CircularProgress size={16} /> : <MyLocation />}
+                  fullWidth
+                  disabled={gettingLocation}
+                  sx={{ 
+                    borderRadius: 2,
+                    py: 1.2,
+                    borderColor: '#42A5F5',
+                    color: '#1976D2',
+                    '&:hover': {
+                      borderColor: '#1976D2',
+                      bgcolor: 'rgba(33, 150, 243, 0.04)'
+                    }
+                  }}
+                >
+                  {gettingLocation ? 'Getting Your Location...' : 'Use My Current Location'}
+                </Button>
+              </Box>
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ p: 3, pt: 1 }}>
+            <Button 
+              onClick={handleLocationDialogClose} 
+              color="inherit"
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                '&:hover': {
+                  bgcolor: 'rgba(0, 0, 0, 0.04)'
+                }
+              }}
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Floating Action Button */}
+        <Fab
+          onClick={handleLocationDialogOpen}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            background: `linear-gradient(135deg, #42A5F5 0%, #1E88E5 100%)`,
+            color: 'white',
+            boxShadow: '0 8px 25px rgba(33, 150, 243, 0.4)',
+            '&:hover': {
+              background: `linear-gradient(135deg, #1E88E5 0%, #1565C0 100%)`,
+              transform: 'scale(1.1)',
+              boxShadow: '0 12px 35px rgba(33, 150, 243, 0.5)'
+            },
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            zIndex: 1000
+          }}
+        >
+          <LocationIcon />
+        </Fab>
+      </Container>
+    </WeatherThemeProvider>
+  );
+};
+
+export default WeatherPage;

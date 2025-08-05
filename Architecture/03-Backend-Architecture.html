@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAGATI.ai - Backend Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #4caf50;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #4caf50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .description {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4caf50;
+        }
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .service-item {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c8e6c9;
+        }
+        .service-item h4 {
+            color: #2e7d32;
+            margin: 0 0 10px 0;
+        }
+        .endpoint-list {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .tech-item {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #b3e5fc;
+        }
+        .tech-item h4 {
+            color: #01579b;
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ Crop Calendar 4.0 - Backend Architecture</h1>
+        
+        <div class="description">
+            <h3>⚙️ Backend Overview</h3>
+            <p>The backend is built as a Node.js/Express RESTful API server that orchestrates multiple specialized services for agricultural data processing, satellite integration, AI recommendations, and comprehensive farming advisory services. It features a microservices architecture with clean separation of concerns and robust error handling.</p>
+        </div>
+
+        <h2>🏗️ Backend Service Architecture</h2>
+        <div class="mermaid">
+graph TB
+    subgraph "API Gateway Layer"
+        EXPRESS[🚀 Express.js Server<br/>Port 5000]
+        MIDDLEWARE[🔧 Middleware Stack<br/>CORS, Helmet, Morgan]
+        VALIDATOR[✅ Input Validation<br/>express-validator]
+    end
+
+    subgraph "Authentication & Security"
+        JWT[🔐 JWT Authentication<br/>Token Management]
+        OAUTH[🔑 OAuth2 Integration<br/>Copernicus Access]
+        BCRYPT[🔒 Password Hashing<br/>bcrypt]
+    end
+
+    subgraph "Route Controllers"
+        AUTH_ROUTE[🔐 /api/auth<br/>Authentication Routes]
+        CROP_ROUTE[🌾 /api/crop-calendar<br/>Calendar Routes]
+        SOIL_ROUTE[🔬 /api/soil<br/>Soil Analysis Routes]
+        SAT_ROUTE[🛰️ /api/satellite-data<br/>Satellite Routes]
+        WEATHER_ROUTE[🌤️ /api/weather<br/>Weather Routes]
+        AI_ROUTE[🤖 /api/ai-recommendations<br/>AI Routes]
+        MANDI_ROUTE[📈 /api/mandi-data<br/>Market Data Routes]
+        SOS_ROUTE[🚨 /api/sos<br/>Emergency Routes]
+        DEBT_ROUTE[💰 /api/debt-counseling<br/>Financial Routes]
+        SCHEME_ROUTE[🏛️ /api/government-schemes<br/>Schemes Routes]
+        SUSTAIN_ROUTE[♻️ /api/sustainable-practices<br/>Sustainability Routes]
+    end
+
+    subgraph "Business Logic Services"
+        CROP_SERVICE[🌾 CropCalendarService<br/>Calendar Generation]
+        SOIL_SERVICE[🔬 SoilAnalysisService<br/>Soil Processing]
+        SAT_SERVICE[🛰️ SatelliteDataService<br/>Satellite Integration]
+        WEATHER_SERVICE[🌤️ WeatherService<br/>Weather Processing]
+        AI_SERVICE[🤖 AIRecommendationService<br/>ML Recommendations]
+        MANDI_SERVICE[📈 MandiDataService<br/>Market Data]
+        MANDI_TRAINING[🎯 MandiDataTrainingService<br/>ML Training]
+        SOS_SERVICE[🚨 SOSEmergencyService<br/>Emergency Handling]
+        DEBT_SERVICE[💰 DebtCounselingService<br/>Financial Advisory]
+        SCHEME_SERVICE[🏛️ GovernmentSchemesService<br/>Schemes Management]
+        SUSTAIN_SERVICE[♻️ SustainablePracticesService<br/>Sustainability]
+    end
+
+    subgraph "Data Layer"
+        CROP_DB[(🗃️ Crop Database<br/>JSON-based Storage)]
+        ML_MODEL[(🎯 ML Models<br/>Price Prediction)]
+        SCHEMES_DB[(🏛️ Government Schemes<br/>JSON Database)]
+        SOIL_CENTERS[(🔬 Soil Testing Centers<br/>Location Database)]
+        TOKEN_CACHE[(⚡ Token Cache<br/>In-Memory Storage)]
+    end
+
+    subgraph "External Integrations"
+        COPERNICUS[🛰️ Copernicus Data Space<br/>Sentinel-2 Satellite Data]
+        OPENWEATHER[🌤️ OpenWeather API<br/>Weather Services]
+        AGMARKNET[📊 AGMARKNET<br/>Mandi Price Scraping]
+        DATA_GOV[🏛️ Data.gov.in<br/>Government Data]
+        HUGGINGFACE[🤖 Hugging Face<br/>AI Models]
+    end
+
+    %% API Gateway Flow
+    EXPRESS --> MIDDLEWARE
+    MIDDLEWARE --> VALIDATOR
+    EXPRESS --> JWT
+    EXPRESS --> OAUTH
+
+    %% Route Connections
+    EXPRESS --> AUTH_ROUTE
+    EXPRESS --> CROP_ROUTE
+    EXPRESS --> SOIL_ROUTE
+    EXPRESS --> SAT_ROUTE
+    EXPRESS --> WEATHER_ROUTE
+    EXPRESS --> AI_ROUTE
+    EXPRESS --> MANDI_ROUTE
+    EXPRESS --> SOS_ROUTE
+    EXPRESS --> DEBT_ROUTE
+    EXPRESS --> SCHEME_ROUTE
+    EXPRESS --> SUSTAIN_ROUTE
+
+    %% Service Connections
+    AUTH_ROUTE --> JWT
+    AUTH_ROUTE --> BCRYPT
+    CROP_ROUTE --> CROP_SERVICE
+    SOIL_ROUTE --> SOIL_SERVICE
+    SAT_ROUTE --> SAT_SERVICE
+    WEATHER_ROUTE --> WEATHER_SERVICE
+    AI_ROUTE --> AI_SERVICE
+    MANDI_ROUTE --> MANDI_SERVICE
+    MANDI_ROUTE --> MANDI_TRAINING
+    SOS_ROUTE --> SOS_SERVICE
+    DEBT_ROUTE --> DEBT_SERVICE
+    SCHEME_ROUTE --> SCHEME_SERVICE
+    SUSTAIN_ROUTE --> SUSTAIN_SERVICE
+
+    %% Data Connections
+    CROP_SERVICE --> CROP_DB
+    CROP_SERVICE --> SAT_SERVICE
+    SOIL_SERVICE --> SAT_SERVICE
+    SOIL_SERVICE --> SOIL_CENTERS
+    SAT_SERVICE --> OAUTH
+    SAT_SERVICE --> TOKEN_CACHE
+    MANDI_SERVICE --> ML_MODEL
+    MANDI_TRAINING --> ML_MODEL
+    SCHEME_SERVICE --> SCHEMES_DB
+
+    %% External API Connections
+    SAT_SERVICE --> COPERNICUS
+    WEATHER_SERVICE --> OPENWEATHER
+    MANDI_SERVICE --> AGMARKNET
+    SCHEME_SERVICE --> DATA_GOV
+    AI_SERVICE --> HUGGINGFACE
+
+    %% Styling
+    classDef gateway fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef auth fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef route fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef service fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef data fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    classDef external fill:#fff8e1,stroke:#f57c00,stroke-width:2px
+
+    class EXPRESS,MIDDLEWARE,VALIDATOR gateway
+    class JWT,OAUTH,BCRYPT auth
+    class AUTH_ROUTE,CROP_ROUTE,SOIL_ROUTE,SAT_ROUTE,WEATHER_ROUTE,AI_ROUTE,MANDI_ROUTE,SOS_ROUTE,DEBT_ROUTE,SCHEME_ROUTE,SUSTAIN_ROUTE route
+    class CROP_SERVICE,SOIL_SERVICE,SAT_SERVICE,WEATHER_SERVICE,AI_SERVICE,MANDI_SERVICE,MANDI_TRAINING,SOS_SERVICE,DEBT_SERVICE,SCHEME_SERVICE,SUSTAIN_SERVICE service
+    class CROP_DB,ML_MODEL,SCHEMES_DB,SOIL_CENTERS,TOKEN_CACHE data
+    class COPERNICUS,OPENWEATHER,AGMARKNET,DATA_GOV,HUGGINGFACE external
+        </div>
+
+        <h2>🔄 Backend Request Flow</h2>
+        <div class="mermaid">
+sequenceDiagram
+    participant C as 🌐 Client
+    participant E as 🚀 Express Server
+    participant M as 🔧 Middleware
+    participant R as 🛤️ Route Handler
+    participant S as ⚙️ Service Layer
+    participant D as 🗃️ Database
+    participant A as 🌍 External API
+
+    C->>E: HTTP Request
+    E->>M: Process Middleware
+    M->>M: CORS, Security, Logging
+    M->>R: Route to Handler
+    R->>R: Validate Input
+    R->>S: Call Service Method
+    
+    alt External Data Required
+        S->>A: API Call
+        A-->>S: External Data
+    end
+    
+    S->>D: Query/Update Data
+    D-->>S: Return Data
+    S->>S: Process Business Logic
+    S-->>R: Return Result
+    R-->>E: JSON Response
+    E-->>C: HTTP Response
+        </div>
+
+        <h2>🛠️ Core Backend Services</h2>
+        <div class="service-grid">
+            <div class="service-item">
+                <h4>🌾 Crop Calendar Service</h4>
+                <p>Generates personalized crop calendars with planting schedules, fertilization timelines, and harvest predictions using satellite data and AI recommendations.</p>
+                <div class="endpoint-list">
+                    POST /api/crop-calendar/generate<br/>
+                    GET /api/crop-calendar/crops<br/>
+                    GET /api/crop-calendar/schedule/:id
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>🔬 Soil Analysis Service</h4>
+                <p>Comprehensive soil health assessment using satellite data, generating crop recommendations and soil improvement suggestions based on location analysis.</p>
+                <div class="endpoint-list">
+                    GET /api/soil/analysis<br/>
+                    POST /api/soil/recommendations<br/>
+                    GET /api/locations/search<br/>
+                    GET /api/sentinel/data
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>🛰️ Satellite Data Service</h4>
+                <p>Integrates with Copernicus Sentinel-2 satellites for real-time vegetation indices (NDVI), soil moisture, and crop health monitoring with OAuth2 authentication.</p>
+                <div class="endpoint-list">
+                    GET /api/satellite-data/vegetation<br/>
+                    GET /api/satellite-data/soil-moisture<br/>
+                    GET /api/satellite-data/ndvi<br/>
+                    GET /api/satellite-data/weather
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>🌤️ Weather Service</h4>
+                <p>Location-based weather forecasting and agricultural weather alerts using OpenWeather API with historical and forecast data processing.</p>
+                <div class="endpoint-list">
+                    GET /api/weather/current<br/>
+                    GET /api/weather/forecast<br/>
+                    GET /api/weather/historical<br/>
+                    GET /api/weather/alerts
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>🤖 AI Recommendation Service</h4>
+                <p>Machine learning powered agricultural recommendations using Hugging Face models for crop selection, disease prediction, and yield optimization.</p>
+                <div class="endpoint-list">
+                    POST /api/ai-recommendations/crop<br/>
+                    POST /api/ai-recommendations/disease<br/>
+                    GET /api/ai-recommendations/yield<br/>
+                    POST /api/ai-recommendations/optimize
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>📈 Mandi Data Service</h4>
+                <p>Real-time market price data from AGMARKNET with ML-based price prediction and market trend analysis for agricultural commodities.</p>
+                <div class="endpoint-list">
+                    GET /api/mandi-data/prices<br/>
+                    GET /api/mandi-data/trends<br/>
+                    POST /api/mandi-data/predict<br/>
+                    GET /api/mandi-data/markets
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>🚨 SOS Emergency Service</h4>
+                <p>Agricultural emergency services providing immediate assistance for crop diseases, pest outbreaks, weather disasters, and farming emergencies.</p>
+                <div class="endpoint-list">
+                    POST /api/sos/emergency<br/>
+                    GET /api/sos/status/:id<br/>
+                    GET /api/sos/resources<br/>
+                    POST /api/sos/update
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>💰 Debt Counseling Service</h4>
+                <p>Financial advisory services for farmers including debt analysis, budget planning, loan recommendations, and financial health assessment.</p>
+                <div class="endpoint-list">
+                    POST /api/debt-counseling/analyze<br/>
+                    GET /api/debt-counseling/resources<br/>
+                    GET /api/debt-counseling/budget<br/>
+                    POST /api/debt-counseling/plan
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>🏛️ Government Schemes Service</h4>
+                <p>Access to agricultural subsidies, government schemes, and policy information with eligibility checking and application guidance.</p>
+                <div class="endpoint-list">
+                    GET /api/government-schemes/list<br/>
+                    GET /api/government-schemes/eligibility<br/>
+                    GET /api/government-schemes/apply<br/>
+                    GET /api/government-schemes/status
+                </div>
+            </div>
+            
+            <div class="service-item">
+                <h4>♻️ Sustainable Practices Service</h4>
+                <p>Eco-friendly farming practices, organic farming guidance, sustainability assessments, and environmental impact analysis.</p>
+                <div class="endpoint-list">
+                    GET /api/sustainable-practices/list<br/>
+                    POST /api/sustainable-practices/assess<br/>
+                    GET /api/sustainable-practices/guide<br/>
+                    POST /api/sustainable-practices/impact
+                </div>
+            </div>
+        </div>
+
+        <h2>🔐 Authentication & Security Architecture</h2>
+        <div class="mermaid">
+graph LR
+    subgraph "Client Authentication"
+        LOGIN[🔑 User Login]
+        REGISTER[📝 User Registration]
+        TOKEN[🎫 JWT Token]
+    end
+
+    subgraph "Server Authentication"
+        JWT_VERIFY[✅ JWT Verification]
+        BCRYPT_HASH[🔒 Password Hashing]
+        REFRESH[🔄 Token Refresh]
+    end
+
+    subgraph "External API Authentication"
+        OAUTH2[🔐 OAuth2 Flow]
+        API_KEYS[🔑 API Keys]
+        TOKEN_CACHE[⚡ Token Caching]
+    end
+
+    subgraph "Security Middleware"
+        HELMET[🛡️ Helmet.js<br/>Security Headers]
+        CORS[🌐 CORS<br/>Cross-Origin]
+        RATE_LIMIT[⏱️ Rate Limiting]
+        INPUT_VALIDATION[✅ Input Validation]
+    end
+
+    LOGIN --> JWT_VERIFY
+    REGISTER --> BCRYPT_HASH
+    JWT_VERIFY --> TOKEN
+    TOKEN --> REFRESH
+
+    OAUTH2 --> API_KEYS
+    API_KEYS --> TOKEN_CACHE
+
+    HELMET --> CORS
+    CORS --> RATE_LIMIT
+    RATE_LIMIT --> INPUT_VALIDATION
+
+    %% Styling
+    classDef client fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef server fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef external fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef security fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+
+    class LOGIN,REGISTER,TOKEN client
+    class JWT_VERIFY,BCRYPT_HASH,REFRESH server
+    class OAUTH2,API_KEYS,TOKEN_CACHE external
+    class HELMET,CORS,RATE_LIMIT,INPUT_VALIDATION security
+        </div>
+
+        <h2>🗃️ Data Management Architecture</h2>
+        <div class="mermaid">
+graph TB
+    subgraph "Structured Data"
+        CROP_DATA[🌾 Crop Database<br/>50+ Crop Varieties]
+        SCHEMES_DATA[🏛️ Government Schemes<br/>Policy Database]
+        SOIL_CENTERS[🔬 Soil Testing Centers<br/>Location Database]
+    end
+
+    subgraph "Machine Learning Models"
+        PRICE_MODEL[📈 Price Prediction Model<br/>10,000+ Training Samples]
+        CROP_RECOMMENDATION[🌱 Crop Recommendation ML<br/>Soil-based Suggestions]
+        YIELD_PREDICTION[📊 Yield Prediction<br/>Satellite-based Analysis]
+    end
+
+    subgraph "Cache Layer"
+        TOKEN_CACHE[🔐 OAuth2 Token Cache<br/>In-Memory Storage]
+        API_CACHE[⚡ API Response Cache<br/>Performance Optimization]
+        SESSION_CACHE[👤 User Session Cache<br/>Authentication State]
+    end
+
+    subgraph "External Data Sources"
+        SATELLITE_DATA[🛰️ Real-time Satellite Data<br/>Copernicus Sentinel-2]
+        WEATHER_DATA[🌤️ Weather Information<br/>OpenWeather API]
+        MARKET_DATA[📊 Market Prices<br/>AGMARKNET Scraping]
+        GOV_DATA[🏛️ Government Data<br/>Data.gov.in API]
+    end
+
+    %% Data Flow
+    CROP_DATA --> CROP_RECOMMENDATION
+    MARKET_DATA --> PRICE_MODEL
+    SATELLITE_DATA --> YIELD_PREDICTION
+    
+    TOKEN_CACHE --> SATELLITE_DATA
+    API_CACHE --> WEATHER_DATA
+    SESSION_CACHE --> GOV_DATA
+
+    %% Styling
+    classDef structured fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef ml fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef cache fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef external fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+
+    class CROP_DATA,SCHEMES_DATA,SOIL_CENTERS structured
+    class PRICE_MODEL,CROP_RECOMMENDATION,YIELD_PREDICTION ml
+    class TOKEN_CACHE,API_CACHE,SESSION_CACHE cache
+    class SATELLITE_DATA,WEATHER_DATA,MARKET_DATA,GOV_DATA external
+        </div>
+
+        <h2>🛠️ Backend Technology Stack</h2>
+        <div class="tech-stack">
+            <div class="tech-item">
+                <h4>Runtime</h4>
+                <p>Node.js 22.18.0<br/>JavaScript ES6+<br/>NPM Package Manager</p>
+            </div>
+            <div class="tech-item">
+                <h4>Web Framework</h4>
+                <p>Express.js 4.18.x<br/>RESTful Architecture<br/>Middleware Support</p>
+            </div>
+            <div class="tech-item">
+                <h4>Security</h4>
+                <p>Helmet.js<br/>CORS<br/>bcrypt<br/>JWT</p>
+            </div>
+            <div class="tech-item">
+                <h4>HTTP Client</h4>
+                <p>Axios<br/>Request/Response Interceptors<br/>Error Handling</p>
+            </div>
+            <div class="tech-item">
+                <h4>Data Processing</h4>
+                <p>Moment.js<br/>Express Validator<br/>JSON Processing</p>
+            </div>
+            <div class="tech-item">
+                <h4>Logging</h4>
+                <p>Morgan<br/>Console Logging<br/>Error Tracking</p>
+            </div>
+            <div class="tech-item">
+                <h4>Environment</h4>
+                <p>dotenv<br/>Environment Variables<br/>Configuration Management</p>
+            </div>
+            <div class="tech-item">
+                <h4>ML/AI</h4>
+                <p>Hugging Face API<br/>Custom ML Models<br/>Price Prediction</p>
+            </div>
+        </div>
+
+        <div class="description">
+            <h3>⚡ Backend Performance Features</h3>
+            <ul>
+                <li><strong>Caching Strategy:</strong> In-memory caching for OAuth2 tokens and API responses</li>
+                <li><strong>Connection Pooling:</strong> Efficient HTTP connection management</li>
+                <li><strong>Error Handling:</strong> Comprehensive error catching and graceful degradation</li>
+                <li><strong>Rate Limiting:</strong> API rate limiting to prevent abuse</li>
+                <li><strong>Data Validation:</strong> Input sanitization and validation at all endpoints</li>
+                <li><strong>Logging:</strong> Comprehensive request/response logging for monitoring</li>
+                <li><strong>Fallback Mechanisms:</strong> Graceful handling of external API failures</li>
+                <li><strong>Scalability:</strong> Stateless design for horizontal scaling</li>
+            </ul>
+        </div>
+
+        <div class="description">
+            <h3>🌐 External API Integration Details</h3>
+            <ul>
+                <li><strong>Copernicus Data Space:</strong> OAuth2 authentication, real-time satellite imagery</li>
+                <li><strong>OpenWeather API:</strong> Current weather, forecasts, historical data</li>
+                <li><strong>AGMARKNET:</strong> Web scraping for real-time mandi prices</li>
+                <li><strong>Data.gov.in:</strong> Government schemes and agricultural policies</li>
+                <li><strong>Hugging Face:</strong> AI model inference for crop recommendations</li>
+                <li><strong>Machine Learning:</strong> Custom trained models for price prediction</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#4caf50',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#388e3c',
+                lineColor: '#34495e',
+                sectionBkgColor: '#f8f9fa',
+                altSectionBkgColor: '#e8f5e8',
+                gridColor: '#bdc3c7',
+                secondaryColor: '#e3f2fd',
+                tertiaryColor: '#fff3e0'
+            }
+        });
+    </script>
+</body>
+</html>

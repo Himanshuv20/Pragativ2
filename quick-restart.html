@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriGuru 4.0 - Quick Restart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .restart-button {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            min-width: 250px;
+            transition: all 0.3s ease;
+        }
+        
+        .restart-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .method {
+            background: #f8f9fa;
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .method h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        
+        .command {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        
+        .status {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .status h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        
+        .server-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f5f5f5;
+        }
+        
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff5722;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-online {
+            background: #4caf50;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .urls {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .url-card {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        
+        .url-card:hover {
+            transform: translateY(-5px);
+            text-decoration: none;
+            color: white;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .action-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 AgriGuru 4.0 - Quick Restart</h1>
+        
+        <div class="status">
+            <h3>📊 Server Status</h3>
+            <div class="server-status">
+                <span>Backend Server (Port 5000)</span>
+                <div class="status-indicator" id="backend-status"></div>
+            </div>
+            <div class="server-status">
+                <span>Frontend Server (Port 3000)</span>
+                <div class="status-indicator" id="frontend-status"></div>
+            </div>
+        </div>
+        
+        <div class="method">
+            <h3>🎯 Method 1: One-Click Restart (Recommended)</h3>
+            <p>Click the button below to automatically restart both servers:</p>
+            <button class="restart-button" onclick="restartWithBatch()">
+                🔄 Restart Application
+            </button>
+            <p><small>This will run the batch file that handles everything automatically.</small></p>
+        </div>
+        
+        <div class="method">
+            <h3>⚡ Method 2: PowerShell Script</h3>
+            <p>For advanced users, run the PowerShell script:</p>
+            <div class="command">
+                powershell -ExecutionPolicy Bypass -File "restart-app.ps1"
+            </div>
+            <button class="action-btn" onclick="runPowerShell()">Run PowerShell Script</button>
+        </div>
+        
+        <div class="method">
+            <h3>🛠️ Method 3: Manual Commands</h3>
+            <p>Open two separate terminals and run:</p>
+            
+            <h4>Terminal 1 (Backend):</h4>
+            <div class="command">
+                cd "c:\Users\himan\Hackathon\CropCalendar4.0\backend"<br>
+                node server.js
+            </div>
+            
+            <h4>Terminal 2 (Frontend):</h4>
+            <div class="command">
+                cd "c:\Users\himan\Hackathon\CropCalendar4.0\frontend"<br>
+                npm start
+            </div>
+        </div>
+        
+        <div class="urls">
+            <a href="http://localhost:3000" class="url-card" target="_blank">
+                <h3>🌾 Frontend App</h3>
+                <p>localhost:3000</p>
+            </a>
+            <a href="http://localhost:5000" class="url-card" target="_blank">
+                <h3>🔧 Backend API</h3>
+                <p>localhost:5000</p>
+            </a>
+        </div>
+        
+        <div class="quick-actions">
+            <button class="action-btn" onclick="openChatbotTest()">🤖 Test Chatbot</button>
+            <button class="action-btn" onclick="checkLogs()">📋 View Logs</button>
+            <button class="action-btn" onclick="killProcesses()">🛑 Stop All Servers</button>
+            <button class="action-btn" onclick="refreshStatus()">🔄 Refresh Status</button>
+        </div>
+        
+        <div class="status">
+            <h3>✨ What's New in Your Chatbot</h3>
+            <ul>
+                <li>🧠 AI-powered natural language understanding</li>
+                <li>🌾 Smart routing to agricultural modules</li>
+                <li>💬 Conversation memory and context</li>
+                <li>🎯 Intent classification for precise responses</li>
+                <li>📱 Mobile-friendly floating interface</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Check server status
+        async function checkServerStatus() {
+            try {
+                const backendResponse = await fetch('http://localhost:5000/api/chatbot/intents', { 
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                document.getElementById('backend-status').classList.add('status-online');
+                console.log('Backend: Online');
+            } catch (e) {
+                document.getElementById('backend-status').classList.remove('status-online');
+                console.log('Backend: Offline');
+            }
+            
+            try {
+                const frontendResponse = await fetch('http://localhost:3000', { 
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                document.getElementById('frontend-status').classList.add('status-online');
+                console.log('Frontend: Online');
+            } catch (e) {
+                document.getElementById('frontend-status').classList.remove('status-online');
+                console.log('Frontend: Offline');
+            }
+        }
+        
+        function restartWithBatch() {
+            if (confirm('This will restart both servers. Continue?')) {
+                // Try to run the batch file
+                try {
+                    const link = document.createElement('a');
+                    link.href = 'file:///c:/Users/himan/Hackathon/CropCalendar4.0/restart-app.bat';
+                    link.click();
+                } catch (e) {
+                    alert('Please manually run: restart-app.bat from the project folder');
+                }
+                
+                // Refresh status after delay
+                setTimeout(() => {
+                    checkServerStatus();
+                }, 15000);
+            }
+        }
+        
+        function runPowerShell() {
+            alert('Please open PowerShell as Administrator and run:\\npowershell -ExecutionPolicy Bypass -File "restart-app.ps1"');
+        }
+        
+        function openChatbotTest() {
+            window.open('chatbot-test.html', '_blank');
+        }
+        
+        function checkLogs() {
+            alert('Check the terminal windows where the servers are running for logs.');
+        }
+        
+        function killProcesses() {
+            if (confirm('This will stop all Node.js processes. Continue?')) {
+                alert('Please run in Command Prompt:\\ntaskkill /F /IM node.exe');
+                setTimeout(() => {
+                    checkServerStatus();
+                }, 3000);
+            }
+        }
+        
+        function refreshStatus() {
+            checkServerStatus();
+        }
+        
+        // Check status on load and every 10 seconds
+        checkServerStatus();
+        setInterval(checkServerStatus, 10000);
+        
+        // Show loading message
+        setTimeout(() => {
+            if (!document.getElementById('backend-status').classList.contains('status-online') && 
+                !document.getElementById('frontend-status').classList.contains('status-online')) {
+                console.log('Servers appear to be offline. Use restart methods above.');
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

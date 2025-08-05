@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAGATI.ai - Individual Modules Architecture</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #ff9800;
+            padding-bottom: 15px;
+        }
+        h2 {
+            color: #ff9800;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #e65100;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .mermaid {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .description {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ff9800;
+        }
+        .module-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 2px solid #ffcc02;
+            border-radius: 10px;
+            background: #fffde7;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            background: #f1f8e9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4caf50;
+        }
+        .feature-item h4 {
+            color: #2e7d32;
+            margin: 0 0 8px 0;
+        }
+        .api-endpoint {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 5px 0;
+            border-left: 3px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Crop Calendar 4.0 - Individual Modules Architecture</h1>
+        
+        <div class="description">
+            <h3>📋 Module Overview</h3>
+            <p>The Crop Calendar 4.0 application is composed of specialized modules, each handling specific agricultural advisory functions. This document provides detailed architectural insights into each individual module, their internal workflows, and integration patterns.</p>
+        </div>
+
+        <!-- Crop Calendar Module -->
+        <div class="module-section">
+            <h2>🌾 Crop Calendar Module</h2>
+            <div class="description">
+                <p>The core module that generates personalized crop calendars using satellite data, AI recommendations, and comprehensive agricultural knowledge. Integrates weather data, soil analysis, and market trends for optimal farming schedules.</p>
+            </div>
+
+            <h3>🏗️ Crop Calendar Module Architecture</h3>
+            <div class="mermaid">
+graph TB
+    subgraph "Frontend Components"
+        CROP_PAGE[🌾 CropCalendarPage<br/>Main Interface]
+        LOCATION_STEP[📍 LocationStep<br/>GPS Selection]
+        CROP_STEP[🌱 CropSelectionStep<br/>Crop Picker]
+        AREA_STEP[📏 AreaStep<br/>Area Input]
+        RESULTS[📅 CalendarResults<br/>Generated Calendar]
+    end
+
+    subgraph "Backend Services"
+        CROP_ROUTE[🛤️ cropCalendar.js<br/>Route Handler]
+        CROP_SERVICE[⚙️ cropCalendarService.js<br/>Business Logic]
+        SAT_INTEGRATION[🛰️ Satellite Integration<br/>Live Data Processing]
+        AI_INTEGRATION[🤖 AI Integration<br/>Recommendations]
+    end
+
+    subgraph "Data Sources"
+        CROP_DB[(🗃️ Crop Database<br/>50+ Varieties)]
+        SATELLITE_DATA[🛰️ Sentinel-2 Data<br/>Real-time Imagery]
+        WEATHER_DATA[🌤️ Weather Data<br/>Forecasts & History]
+        AI_MODELS[🤖 AI Models<br/>Crop Optimization]
+    end
+
+    subgraph "Processing Engine"
+        CALENDAR_GEN[📅 Calendar Generator<br/>Timeline Creation]
+        FERTILIZER_CALC[🧪 Fertilization Calculator<br/>Nutrient Planning]
+        IRRIGATION_CALC[💧 Irrigation Calculator<br/>Water Management]
+        HARVEST_PRED[🌾 Harvest Predictor<br/>Timing Optimization]
+    end
+
+    %% Component Flow
+    CROP_PAGE --> LOCATION_STEP
+    LOCATION_STEP --> CROP_STEP
+    CROP_STEP --> AREA_STEP
+    AREA_STEP --> RESULTS
+
+    %% Backend Flow
+    CROP_PAGE --> CROP_ROUTE
+    CROP_ROUTE --> CROP_SERVICE
+    CROP_SERVICE --> SAT_INTEGRATION
+    CROP_SERVICE --> AI_INTEGRATION
+
+    %% Data Integration
+    CROP_SERVICE --> CROP_DB
+    SAT_INTEGRATION --> SATELLITE_DATA
+    CROP_SERVICE --> WEATHER_DATA
+    AI_INTEGRATION --> AI_MODELS
+
+    %% Processing
+    CROP_SERVICE --> CALENDAR_GEN
+    CROP_SERVICE --> FERTILIZER_CALC
+    CROP_SERVICE --> IRRIGATION_CALC
+    CROP_SERVICE --> HARVEST_PRED
+
+    %% Return Flow
+    CALENDAR_GEN --> RESULTS
+    FERTILIZER_CALC --> RESULTS
+    IRRIGATION_CALC --> RESULTS
+    HARVEST_PRED --> RESULTS
+
+    %% Styling
+    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef backend fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef data fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef processing fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+
+    class CROP_PAGE,LOCATION_STEP,CROP_STEP,AREA_STEP,RESULTS frontend
+    class CROP_ROUTE,CROP_SERVICE,SAT_INTEGRATION,AI_INTEGRATION backend
+    class CROP_DB,SATELLITE_DATA,WEATHER_DATA,AI_MODELS data
+    class CALENDAR_GEN,FERTILIZER_CALC,IRRIGATION_CALC,HARVEST_PRED processing
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>📍 Location Intelligence</h4>
+                    <p>GPS-based location selection with satellite data integration for precise agricultural recommendations.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌱 Smart Crop Selection</h4>
+                    <p>AI-powered crop recommendations based on soil conditions, climate, and market trends.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📅 Dynamic Calendar Generation</h4>
+                    <p>Real-time calendar creation with planting, fertilization, and harvest schedules.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🛰️ Satellite Integration</h4>
+                    <p>Live Copernicus Sentinel-2 data for vegetation monitoring and soil analysis.</p>
+                </div>
+            </div>
+
+            <div class="api-endpoint">POST /api/crop-calendar/generate</div>
+            <div class="api-endpoint">GET /api/crop-calendar/crops</div>
+            <div class="api-endpoint">GET /api/crop-calendar/schedule/:id</div>
+        </div>
+
+        <!-- Soil Analysis Module -->
+        <div class="module-section">
+            <h2>🔬 Soil Analysis Module</h2>
+            <div class="description">
+                <p>Advanced soil health assessment module using satellite imagery, machine learning, and comprehensive agricultural databases to provide soil-specific crop recommendations and improvement strategies.</p>
+            </div>
+
+            <h3>🏗️ Soil Analysis Module Architecture</h3>
+            <div class="mermaid">
+graph TB
+    subgraph "Frontend Interface"
+        SOIL_PAGE[🔬 SoilAnalysisPage<br/>Main Interface]
+        MAP_PICKER[🗺️ MapLocationPicker<br/>Interactive Map]
+        COORD_INPUT[📍 Coordinate Input<br/>Manual Entry]
+        ANALYSIS_FORM[📋 Analysis Form<br/>Parameters]
+        RECOMMENDATIONS[💡 Crop Recommendations<br/>Results Display]
+    end
+
+    subgraph "Backend Processing"
+        SOIL_ROUTE[🛤️ soilAnalysis.js<br/>Route Handler]
+        SOIL_SERVICE[⚙️ soilAnalysisService.js<br/>Core Service]
+        COPERNICUS_AUTH[🔐 OAuth2 Authentication<br/>Copernicus Access]
+        DATA_PROCESSOR[📊 Data Processor<br/>Satellite Analysis]
+    end
+
+    subgraph "Satellite Data Integration"
+        SENTINEL2[🛰️ Sentinel-2<br/>Multispectral Imagery]
+        NDVI_CALC[📈 NDVI Calculator<br/>Vegetation Index]
+        MOISTURE_CALC[💧 Soil Moisture<br/>Moisture Analysis]
+        HEALTH_ASSESS[🌱 Soil Health<br/>Assessment Engine]
+    end
+
+    subgraph "Machine Learning"
+        CROP_ML[🤖 Crop Recommendation ML<br/>Soil-based Suggestions]
+        YIELD_PREDICT[📊 Yield Prediction<br/>Productivity Analysis]
+        RISK_ASSESS[⚠️ Risk Assessment<br/>Agricultural Risks]
+        CONFIDENCE_CALC[📈 Confidence Calculator<br/>Reliability Scoring]
+    end
+
+    subgraph "Data Sources"
+        SOIL_CENTERS[(🏢 Soil Testing Centers<br/>Location Database)]
+        CROP_DATABASE[(🌾 Crop Database<br/>Compatibility Matrix)]
+        WEATHER_INTEGRATION[🌤️ Weather Integration<br/>Climate Factors]
+        FALLBACK_DATA[🔄 Fallback Data<br/>Mock Data System]
+    end
+
+    %% Frontend Flow
+    SOIL_PAGE --> MAP_PICKER
+    SOIL_PAGE --> COORD_INPUT
+    SOIL_PAGE --> ANALYSIS_FORM
+    ANALYSIS_FORM --> RECOMMENDATIONS
+
+    %% Backend Processing
+    SOIL_PAGE --> SOIL_ROUTE
+    SOIL_ROUTE --> SOIL_SERVICE
+    SOIL_SERVICE --> COPERNICUS_AUTH
+    SOIL_SERVICE --> DATA_PROCESSOR
+
+    %% Satellite Processing
+    COPERNICUS_AUTH --> SENTINEL2
+    SENTINEL2 --> NDVI_CALC
+    SENTINEL2 --> MOISTURE_CALC
+    DATA_PROCESSOR --> HEALTH_ASSESS
+
+    %% ML Processing
+    HEALTH_ASSESS --> CROP_ML
+    HEALTH_ASSESS --> YIELD_PREDICT
+    HEALTH_ASSESS --> RISK_ASSESS
+    CROP_ML --> CONFIDENCE_CALC
+
+    %% Data Integration
+    SOIL_SERVICE --> SOIL_CENTERS
+    CROP_ML --> CROP_DATABASE
+    SOIL_SERVICE --> WEATHER_INTEGRATION
+    SOIL_SERVICE --> FALLBACK_DATA
+
+    %% Results Flow
+    CONFIDENCE_CALC --> RECOMMENDATIONS
+    YIELD_PREDICT --> RECOMMENDATIONS
+    RISK_ASSESS --> RECOMMENDATIONS
+
+    %% Styling
+    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef backend fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef satellite fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef ml fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef data fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+
+    class SOIL_PAGE,MAP_PICKER,COORD_INPUT,ANALYSIS_FORM,RECOMMENDATIONS frontend
+    class SOIL_ROUTE,SOIL_SERVICE,COPERNICUS_AUTH,DATA_PROCESSOR backend
+    class SENTINEL2,NDVI_CALC,MOISTURE_CALC,HEALTH_ASSESS satellite
+    class CROP_ML,YIELD_PREDICT,RISK_ASSESS,CONFIDENCE_CALC ml
+    class SOIL_CENTERS,CROP_DATABASE,WEATHER_INTEGRATION,FALLBACK_DATA data
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🛰️ Real-time Satellite Analysis</h4>
+                    <p>Live Copernicus Sentinel-2 imagery processing for accurate soil and vegetation assessment.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📈 NDVI Vegetation Index</h4>
+                    <p>Normalized Difference Vegetation Index calculation for crop health monitoring.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>💧 Soil Moisture Detection</h4>
+                    <p>Advanced soil moisture analysis using satellite data and weather integration.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🤖 AI-Powered Recommendations</h4>
+                    <p>Machine learning based crop recommendations with confidence scoring.</p>
+                </div>
+            </div>
+
+            <div class="api-endpoint">GET /api/soil/analysis?lat={lat}&lon={lon}&date={date}</div>
+            <div class="api-endpoint">POST /api/soil/recommendations</div>
+            <div class="api-endpoint">GET /api/locations/search?query={location}</div>
+            <div class="api-endpoint">GET /api/sentinel/data</div>
+        </div>
+
+        <!-- Satellite Data Module -->
+        <div class="module-section">
+            <h2>🛰️ Satellite Data Module</h2>
+            <div class="description">
+                <p>Core satellite data integration module that handles real-time Copernicus Sentinel-2 satellite imagery processing, OAuth2 authentication, and comprehensive agricultural data analysis for vegetation monitoring and crop health assessment.</p>
+            </div>
+
+            <h3>🏗️ Satellite Data Module Architecture</h3>
+            <div class="mermaid">
+graph TB
+    subgraph "Authentication Layer"
+        OAUTH_MANAGER[🔐 OAuth2 Manager<br/>Token Management]
+        CREDENTIAL_STORE[🔑 Credential Store<br/>Secure Storage]
+        TOKEN_CACHE[⚡ Token Cache<br/>In-Memory Cache]
+        REFRESH_HANDLER[🔄 Token Refresh<br/>Auto-renewal]
+    end
+
+    subgraph "Data Acquisition"
+        API_CLIENT[🌐 Copernicus API Client<br/>HTTP Client]
+        SEARCH_ENGINE[🔍 Product Search<br/>Satellite Query]
+        DOWNLOAD_MANAGER[⬇️ Download Manager<br/>Data Retrieval]
+        METADATA_PARSER[📋 Metadata Parser<br/>Product Information]
+    end
+
+    subgraph "Data Processing"
+        IMAGE_PROCESSOR[🖼️ Image Processor<br/>Satellite Imagery]
+        BAND_CALCULATOR[📊 Band Calculator<br/>Spectral Analysis]
+        NDVI_PROCESSOR[📈 NDVI Processor<br/>Vegetation Index]
+        EVI_PROCESSOR[🌿 EVI Processor<br/>Enhanced Vegetation]
+        MOISTURE_PROCESSOR[💧 Moisture Processor<br/>Soil Moisture]
+    end
+
+    subgraph "Fallback System"
+        MOCK_GENERATOR[🎭 Mock Data Generator<br/>Simulation Data]
+        FALLBACK_LOGIC[🔄 Fallback Logic<br/>Error Handling]
+        DATA_VALIDATOR[✅ Data Validator<br/>Quality Check]
+        CACHE_MANAGER[📦 Cache Manager<br/>Response Caching]
+    end
+
+    subgraph "External Integration"
+        COPERNICUS_API[🛰️ Copernicus Data Space<br/>Ecosystem API]
+        SENTINEL2_DATA[📡 Sentinel-2 Data<br/>Multispectral Imagery]
+        WEATHER_CORRELATION[🌤️ Weather Correlation<br/>Climate Data]
+        GIS_PROCESSING[🗺️ GIS Processing<br/>Geographic Analysis]
+    end
+
+    %% Authentication Flow
+    OAUTH_MANAGER --> CREDENTIAL_STORE
+    OAUTH_MANAGER --> TOKEN_CACHE
+    OAUTH_MANAGER --> REFRESH_HANDLER
+    TOKEN_CACHE --> API_CLIENT
+
+    %% Data Acquisition Flow
+    API_CLIENT --> SEARCH_ENGINE
+    SEARCH_ENGINE --> DOWNLOAD_MANAGER
+    DOWNLOAD_MANAGER --> METADATA_PARSER
+    API_CLIENT --> COPERNICUS_API
+
+    %% Processing Flow
+    METADATA_PARSER --> IMAGE_PROCESSOR
+    IMAGE_PROCESSOR --> BAND_CALCULATOR
+    BAND_CALCULATOR --> NDVI_PROCESSOR
+    BAND_CALCULATOR --> EVI_PROCESSOR
+    BAND_CALCULATOR --> MOISTURE_PROCESSOR
+
+    %% Fallback Flow
+    API_CLIENT --> FALLBACK_LOGIC
+    FALLBACK_LOGIC --> MOCK_GENERATOR
+    MOCK_GENERATOR --> DATA_VALIDATOR
+    DATA_VALIDATOR --> CACHE_MANAGER
+
+    %% External Connections
+    API_CLIENT --> COPERNICUS_API
+    COPERNICUS_API --> SENTINEL2_DATA
+    IMAGE_PROCESSOR --> WEATHER_CORRELATION
+    BAND_CALCULATOR --> GIS_PROCESSING
+
+    %% Styling
+    classDef auth fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef acquisition fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef processing fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef fallback fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef external fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+
+    class OAUTH_MANAGER,CREDENTIAL_STORE,TOKEN_CACHE,REFRESH_HANDLER auth
+    class API_CLIENT,SEARCH_ENGINE,DOWNLOAD_MANAGER,METADATA_PARSER acquisition
+    class IMAGE_PROCESSOR,BAND_CALCULATOR,NDVI_PROCESSOR,EVI_PROCESSOR,MOISTURE_PROCESSOR processing
+    class MOCK_GENERATOR,FALLBACK_LOGIC,DATA_VALIDATOR,CACHE_MANAGER fallback
+    class COPERNICUS_API,SENTINEL2_DATA,WEATHER_CORRELATION,GIS_PROCESSING external
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔐 OAuth2 Authentication</h4>
+                    <p>Secure authentication with Copernicus Data Space Ecosystem using OAuth2 flow and token caching.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📡 Real-time Data Access</h4>
+                    <p>Direct integration with Sentinel-2 satellites for up-to-date agricultural imagery.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Spectral Analysis</h4>
+                    <p>Advanced band calculation for NDVI, EVI, and other vegetation indices.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔄 Intelligent Fallback</h4>
+                    <p>Graceful degradation with mock data when satellite services are unavailable.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Performance Optimization</h4>
+                    <p>Token caching, response caching, and efficient data processing for optimal performance.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📅 Date Offset Handling</h4>
+                    <p>Intelligent 5-day date offset to account for satellite data processing delays.</p>
+                </div>
+            </div>
+
+            <div class="api-endpoint">GET /api/satellite-data/vegetation?lat={lat}&lon={lon}</div>
+            <div class="api-endpoint">GET /api/satellite-data/soil-moisture?lat={lat}&lon={lon}</div>
+            <div class="api-endpoint">GET /api/satellite-data/ndvi?lat={lat}&lon={lon}&date={date}</div>
+            <div class="api-endpoint">GET /api/satellite-data/weather?lat={lat}&lon={lon}</div>
+        </div>
+
+        <!-- Mandi Data Module -->
+        <div class="module-section">
+            <h2>📈 Mandi Data Module</h2>
+            <div class="description">
+                <p>Comprehensive market data module that provides real-time agricultural commodity prices, market trends, and machine learning based price predictions using AGMARKNET data scraping and custom ML models.</p>
+            </div>
+
+            <h3>🏗️ Mandi Data Module Architecture</h3>
+            <div class="mermaid">
+graph TB
+    subgraph "Frontend Interface"
+        MANDI_PAGE[📈 MandiDataPage<br/>Market Dashboard]
+        PRICE_DISPLAY[💰 Price Display<br/>Current Rates]
+        TREND_CHARTS[📊 Trend Charts<br/>Price Visualization]
+        PREDICTION_UI[🔮 Prediction UI<br/>Forecast Display]
+        TRAINING_UI[🎯 Training UI<br/>ML Model Training]
+    end
+
+    subgraph "Backend Services"
+        MANDI_ROUTE[🛤️ mandiData.js<br/>Route Handler]
+        MANDI_SERVICE[⚙️ mandiDataService.js<br/>Core Service]
+        TRAINING_SERVICE[🎯 mandiDataTrainingService.js<br/>ML Training]
+        SCRAPER_SERVICE[🕷️ Web Scraper<br/>AGMARKNET Data]
+    end
+
+    subgraph "Data Sources"
+        AGMARKNET[🌐 AGMARKNET<br/>Government Portal]
+        DATA_GOV_API[🏛️ Data.gov.in API<br/>Official Data]
+        FALLBACK_SCRAPER[🔄 Fallback Scraper<br/>Alternative Sources]
+        HISTORICAL_DATA[📚 Historical Data<br/>Price History]
+    end
+
+    subgraph "Machine Learning"
+        PRICE_MODEL[🤖 Price Prediction Model<br/>ML Algorithm]
+        TRAINING_DATA[📊 Training Dataset<br/>10,000+ Samples]
+        MODEL_TRAINER[🎯 Model Trainer<br/>Continuous Learning]
+        PREDICTION_ENGINE[🔮 Prediction Engine<br/>Forecast Generator]
+    end
+
+    subgraph "Data Processing"
+        DATA_VALIDATOR[✅ Data Validator<br/>Quality Control]
+        PRICE_CALCULATOR[💰 Price Calculator<br/>Statistical Analysis]
+        TREND_ANALYZER[📈 Trend Analyzer<br/>Market Analysis]
+        ANOMALY_DETECTOR[⚠️ Anomaly Detector<br/>Price Outliers]
+    end
+
+    %% Frontend Flow
+    MANDI_PAGE --> PRICE_DISPLAY
+    MANDI_PAGE --> TREND_CHARTS
+    MANDI_PAGE --> PREDICTION_UI
+    MANDI_PAGE --> TRAINING_UI
+
+    %% Backend Flow
+    MANDI_PAGE --> MANDI_ROUTE
+    MANDI_ROUTE --> MANDI_SERVICE
+    TRAINING_UI --> TRAINING_SERVICE
+    MANDI_SERVICE --> SCRAPER_SERVICE
+
+    %% Data Sources
+    SCRAPER_SERVICE --> AGMARKNET
+    SCRAPER_SERVICE --> DATA_GOV_API
+    SCRAPER_SERVICE --> FALLBACK_SCRAPER
+    MANDI_SERVICE --> HISTORICAL_DATA
+
+    %% ML Flow
+    TRAINING_SERVICE --> PRICE_MODEL
+    TRAINING_SERVICE --> TRAINING_DATA
+    TRAINING_SERVICE --> MODEL_TRAINER
+    PRICE_MODEL --> PREDICTION_ENGINE
+
+    %% Processing Flow
+    SCRAPER_SERVICE --> DATA_VALIDATOR
+    DATA_VALIDATOR --> PRICE_CALCULATOR
+    PRICE_CALCULATOR --> TREND_ANALYZER
+    TREND_ANALYZER --> ANOMALY_DETECTOR
+
+    %% Results Flow
+    PREDICTION_ENGINE --> PREDICTION_UI
+    TREND_ANALYZER --> TREND_CHARTS
+    PRICE_CALCULATOR --> PRICE_DISPLAY
+    ANOMALY_DETECTOR --> PRICE_DISPLAY
+
+    %% Styling
+    classDef frontend fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef backend fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef data fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef ml fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef processing fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+
+    class MANDI_PAGE,PRICE_DISPLAY,TREND_CHARTS,PREDICTION_UI,TRAINING_UI frontend
+    class MANDI_ROUTE,MANDI_SERVICE,TRAINING_SERVICE,SCRAPER_SERVICE backend
+    class AGMARKNET,DATA_GOV_API,FALLBACK_SCRAPER,HISTORICAL_DATA data
+    class PRICE_MODEL,TRAINING_DATA,MODEL_TRAINER,PREDICTION_ENGINE ml
+    class DATA_VALIDATOR,PRICE_CALCULATOR,TREND_ANALYZER,ANOMALY_DETECTOR processing
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🕷️ Real-time Web Scraping</h4>
+                    <p>Automated AGMARKNET data collection for up-to-date market prices across multiple states.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🤖 Machine Learning Predictions</h4>
+                    <p>Custom trained ML models with 10,000+ samples for accurate price forecasting.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Comprehensive Analytics</h4>
+                    <p>Statistical analysis, trend detection, and anomaly identification for market insights.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌾 Multi-Crop Support</h4>
+                    <p>Price tracking for 57+ agricultural commodities across Maharashtra and Andhra Pradesh.</p>
+                </div>
+            </div>
+
+            <div class="api-endpoint">GET /api/mandi-data/prices?crop={crop}&state={state}</div>
+            <div class="api-endpoint">GET /api/mandi-data/trends?crop={crop}&duration={days}</div>
+            <div class="api-endpoint">POST /api/mandi-data/predict</div>
+            <div class="api-endpoint">GET /api/mandi-data/markets</div>
+        </div>
+
+        <!-- SOS Emergency Module -->
+        <div class="module-section">
+            <h2>🚨 SOS Emergency Module</h2>
+            <div class="description">
+                <p>Critical agricultural emergency response system providing immediate assistance for crop diseases, pest outbreaks, weather disasters, and farming emergencies with expert recommendations and resource connections.</p>
+            </div>
+
+            <h3>🏗️ SOS Emergency Module Architecture</h3>
+            <div class="mermaid">
+graph TB
+    subgraph "Emergency Interface"
+        SOS_BUTTON[🚨 SOS Button<br/>Quick Access]
+        EMERGENCY_FORM[📋 Emergency Form<br/>Issue Reporting]
+        STATUS_TRACKER[📊 Status Tracker<br/>Case Progress]
+        RESOURCE_DISPLAY[📚 Resource Display<br/>Expert Guidance]
+    end
+
+    subgraph "Emergency Processing"
+        SOS_ROUTE[🛤️ sosEmergency.js<br/>Route Handler]
+        SOS_SERVICE[⚙️ sosEmergencyService.js<br/>Emergency Logic]
+        PRIORITY_CLASSIFIER[🎯 Priority Classifier<br/>Urgency Assessment]
+        EXPERT_MATCHER[👨‍🌾 Expert Matcher<br/>Specialist Assignment]
+    end
+
+    subgraph "Emergency Types"
+        DISEASE_HANDLER[🦠 Disease Handler<br/>Crop Diseases]
+        PEST_HANDLER[🐛 Pest Handler<br/>Pest Outbreaks]
+        WEATHER_HANDLER[🌪️ Weather Handler<br/>Climate Disasters]
+        EQUIPMENT_HANDLER[🚜 Equipment Handler<br/>Machinery Issues]
+    end
+
+    subgraph "Response System"
+        RECOMMENDATION_ENGINE[💡 Recommendation Engine<br/>Solution Generator]
+        RESOURCE_LOCATOR[📍 Resource Locator<br/>Nearby Services]
+        NOTIFICATION_SYSTEM[📱 Notification System<br/>Alert Management]
+        CASE_MANAGER[📁 Case Manager<br/>Issue Tracking]
+    end
+
+    subgraph "External Resources"
+        EXPERT_NETWORK[👨‍🌾 Expert Network<br/>Agricultural Specialists]
+        EMERGENCY_SERVICES[🚑 Emergency Services<br/>Local Authorities]
+        SUPPLY_NETWORK[🏪 Supply Network<br/>Equipment/Medicine]
+        WEATHER_ALERTS[⚠️ Weather Alerts<br/>Disaster Warnings]
+    end
+
+    %% Interface Flow
+    SOS_BUTTON --> EMERGENCY_FORM
+    EMERGENCY_FORM --> STATUS_TRACKER
+    STATUS_TRACKER --> RESOURCE_DISPLAY
+
+    %% Processing Flow
+    EMERGENCY_FORM --> SOS_ROUTE
+    SOS_ROUTE --> SOS_SERVICE
+    SOS_SERVICE --> PRIORITY_CLASSIFIER
+    PRIORITY_CLASSIFIER --> EXPERT_MATCHER
+
+    %% Emergency Type Routing
+    SOS_SERVICE --> DISEASE_HANDLER
+    SOS_SERVICE --> PEST_HANDLER
+    SOS_SERVICE --> WEATHER_HANDLER
+    SOS_SERVICE --> EQUIPMENT_HANDLER
+
+    %% Response Generation
+    EXPERT_MATCHER --> RECOMMENDATION_ENGINE
+    RECOMMENDATION_ENGINE --> RESOURCE_LOCATOR
+    RESOURCE_LOCATOR --> NOTIFICATION_SYSTEM
+    NOTIFICATION_SYSTEM --> CASE_MANAGER
+
+    %% External Integration
+    EXPERT_MATCHER --> EXPERT_NETWORK
+    RESOURCE_LOCATOR --> EMERGENCY_SERVICES
+    RESOURCE_LOCATOR --> SUPPLY_NETWORK
+    WEATHER_HANDLER --> WEATHER_ALERTS
+
+    %% Results Flow
+    CASE_MANAGER --> STATUS_TRACKER
+    RECOMMENDATION_ENGINE --> RESOURCE_DISPLAY
+    RESOURCE_LOCATOR --> RESOURCE_DISPLAY
+
+    %% Styling
+    classDef interface fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    classDef processing fill:#e8f5e8,stroke:#4caf50,stroke-width:2px
+    classDef emergency fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef response fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef external fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+
+    class SOS_BUTTON,EMERGENCY_FORM,STATUS_TRACKER,RESOURCE_DISPLAY interface
+    class SOS_ROUTE,SOS_SERVICE,PRIORITY_CLASSIFIER,EXPERT_MATCHER processing
+    class DISEASE_HANDLER,PEST_HANDLER,WEATHER_HANDLER,EQUIPMENT_HANDLER emergency
+    class RECOMMENDATION_ENGINE,RESOURCE_LOCATOR,NOTIFICATION_SYSTEM,CASE_MANAGER response
+    class EXPERT_NETWORK,EMERGENCY_SERVICES,SUPPLY_NETWORK,WEATHER_ALERTS external
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>⚡ Rapid Response</h4>
+                    <p>One-click emergency reporting with immediate priority classification and expert assignment.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎯 Smart Classification</h4>
+                    <p>AI-powered emergency categorization for efficient routing to appropriate specialists.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📍 Resource Location</h4>
+                    <p>Geographic matching of farmers with nearby experts, services, and emergency resources.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Case Tracking</h4>
+                    <p>Complete case management system with status updates and resolution tracking.</p>
+                </div>
+            </div>
+
+            <div class="api-endpoint">POST /api/sos/emergency</div>
+            <div class="api-endpoint">GET /api/sos/status/:emergencyId</div>
+            <div class="api-endpoint">GET /api/sos/resources?lat={lat}&lon={lon}</div>
+            <div class="api-endpoint">POST /api/sos/update/:emergencyId</div>
+        </div>
+
+        <div class="description">
+            <h3>🔄 Inter-Module Integration</h3>
+            <p>All modules are designed with loose coupling and high cohesion, allowing seamless data flow and shared services. The satellite data module provides core imagery services to both crop calendar and soil analysis modules, while the mandi data module supplies market intelligence to crop recommendations. The SOS emergency module can access all other modules for comprehensive emergency response.</p>
+        </div>
+
+        <div class="description">
+            <h3>⚡ Performance & Scalability</h3>
+            <ul>
+                <li><strong>Microservices Architecture:</strong> Each module can be scaled independently based on demand</li>
+                <li><strong>Caching Strategy:</strong> Module-level caching for frequently accessed data</li>
+                <li><strong>Error Handling:</strong> Graceful degradation with fallback mechanisms</li>
+                <li><strong>Load Balancing:</strong> Ready for horizontal scaling with load distribution</li>
+                <li><strong>API Rate Limiting:</strong> Protection against abuse and resource exhaustion</li>
+                <li><strong>Database Optimization:</strong> Efficient data access patterns and indexing</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#ff9800',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#f57c00',
+                lineColor: '#34495e',
+                sectionBkgColor: '#f8f9fa',
+                altSectionBkgColor: '#fff3e0',
+                gridColor: '#bdc3c7',
+                secondaryColor: '#e8f5e8',
+                tertiaryColor: '#e3f2fd'
+            }
+        });
+    </script>
+</body>
+</html>

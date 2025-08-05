@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Calendar - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2E7D32, #4CAF50);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .status {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .status-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+        .working { border-left: 4px solid #4CAF50; }
+        .loading { border-left: 4px solid #FF9800; }
+        .error { border-left: 4px solid #F44336; }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌾 Crop Calendar Application</h1>
+            <p>Agricultural Advisory Platform</p>
+        </div>
+        
+        <div class="status">
+            <div class="status-item working">
+                <h3>✅ Frontend Server</h3>
+                <p>Port 3001 - Active</p>
+                <p>Serving Static Files</p>
+            </div>
+            
+            <div class="status-item" id="backend-status">
+                <h3>🔄 Backend Server</h3>
+                <p>Port 5001 - Checking...</p>
+                <p id="backend-details">Testing connection...</p>
+            </div>
+            
+            <div class="status-item" id="react-status">
+                <h3>⚛️ React App</h3>
+                <p>Status: <span id="react-details">Initializing...</span></p>
+                <p>Build: Production</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px;">
+            <h2>🚀 Quick Actions</h2>
+            <a href="/" class="btn">🏠 Load React App</a>
+            <a href="/api/health" class="btn">🔍 Check Backend API</a>
+            <button onclick="testComponents()" class="btn">🧪 Test Components</button>
+        </div>
+        
+        <div id="test-results" style="margin-top: 20px; text-align: left; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; display: none;">
+            <h3>🔬 Test Results</h3>
+            <pre id="test-output"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Test backend connectivity
+        async function checkBackend() {
+            const statusDiv = document.getElementById('backend-status');
+            const detailsSpan = document.getElementById('backend-details');
+            
+            try {
+                const response = await fetch('/api/health');
+                if (response.ok) {
+                    statusDiv.className = 'status-item working';
+                    detailsSpan.textContent = 'API responding';
+                } else {
+                    statusDiv.className = 'status-item error';
+                    detailsSpan.textContent = `Error ${response.status}`;
+                }
+            } catch (error) {
+                statusDiv.className = 'status-item error';
+                detailsSpan.textContent = 'Connection failed';
+            }
+        }
+        
+        // Test if React can load
+        async function checkReact() {
+            const statusDiv = document.getElementById('react-status');
+            const detailsSpan = document.getElementById('react-details');
+            
+            try {
+                const response = await fetch('/static/js/main.efda07c7.js');
+                if (response.ok) {
+                    detailsSpan.textContent = 'Bundle loaded successfully';
+                    statusDiv.className = 'status-item working';
+                } else {
+                    detailsSpan.textContent = 'Bundle load failed';
+                    statusDiv.className = 'status-item error';
+                }
+            } catch (error) {
+                detailsSpan.textContent = 'Bundle not accessible';
+                statusDiv.className = 'status-item error';
+            }
+        }
+        
+        // Run comprehensive tests
+        async function testComponents() {
+            const resultsDiv = document.getElementById('test-results');
+            const outputPre = document.getElementById('test-output');
+            
+            resultsDiv.style.display = 'block';
+            outputPre.textContent = 'Running tests...\n\n';
+            
+            const tests = [
+                { name: 'Frontend Static Files', url: '/' },
+                { name: 'Main JavaScript Bundle', url: '/static/js/main.efda07c7.js' },
+                { name: 'CSS Stylesheet', url: '/static/css/main.f855e6bc.css' },
+                { name: 'Backend Health Check', url: '/api/health' },
+                { name: 'Crop Calendar API', url: '/api/crop-calendar/health' },
+                { name: 'Soil Analysis API', url: '/api/soil/health' }
+            ];
+            
+            for (const test of tests) {
+                try {
+                    const response = await fetch(test.url);
+                    const status = response.ok ? '✅ PASS' : '❌ FAIL';
+                    outputPre.textContent += `${status} ${test.name}: ${response.status} ${response.statusText}\n`;
+                } catch (error) {
+                    outputPre.textContent += `❌ FAIL ${test.name}: ${error.message}\n`;
+                }
+            }
+            
+            outputPre.textContent += '\n🔍 Diagnosis:\n';
+            outputPre.textContent += 'If React app is blank but files load, check browser console for JavaScript errors.\n';
+            outputPre.textContent += 'Common issues: Missing dependencies, routing problems, or component errors.\n';
+        }
+        
+        // Initialize checks
+        setTimeout(checkBackend, 1000);
+        setTimeout(checkReact, 1500);
+    </script>
+</body>
+</html>

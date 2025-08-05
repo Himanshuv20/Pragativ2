@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriGuru 4.0 - Application Status</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+        
+        .service-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .service-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        
+        .service-title {
+            font-size: 1.4rem;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        
+        .service-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .status-online {
+            background: #4caf50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        
+        .status-offline {
+            background: #f44336;
+        }
+        
+        .service-url {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+        
+        .service-url a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .service-url a:hover {
+            text-decoration: underline;
+        }
+        
+        .service-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .service-features {
+            list-style: none;
+        }
+        
+        .service-features li {
+            padding: 5px 0;
+            color: #555;
+        }
+        
+        .service-features li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1b5e20;
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .quick-links {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .quick-links h2 {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .quick-link {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
+        
+        .quick-link:hover {
+            background: #e9ecef;
+        }
+        
+        .quick-link-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <button class="refresh-btn" onclick="checkAllServices()">🔄 Refresh Status</button>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🌾 AgriGuru 4.0</h1>
+            <p>Intelligent Agricultural Advisory Platform with AI Chatbot</p>
+        </div>
+        
+        <div class="services-grid">
+            <!-- Backend API Server -->
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon">🔧</div>
+                    <div class="service-title">Backend API Server</div>
+                </div>
+                <div class="service-status">
+                    <div class="status-indicator" id="backend-status"></div>
+                    <span id="backend-status-text">Checking...</span>
+                </div>
+                <div class="service-url">
+                    <a href="http://localhost:5000" target="_blank">http://localhost:5000</a>
+                </div>
+                <div class="service-description">
+                    Core API server with all agricultural modules, real-time data collection, and chatbot integration.
+                </div>
+                <ul class="service-features">
+                    <li>Crop Calendar Generation</li>
+                    <li>Weather Data Integration</li>
+                    <li>Real-time Mandi Prices</li>
+                    <li>Soil Analysis Services</li>
+                    <li>Pest/Disease Analysis</li>
+                    <li>AI Chatbot API</li>
+                </ul>
+                <div class="action-buttons">
+                    <a href="http://localhost:5000" class="btn btn-primary" target="_blank">
+                        🌐 Open API
+                    </a>
+                    <a href="http://localhost:5000/api/chatbot/intents" class="btn btn-secondary" target="_blank">
+                        📋 View Intents
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Frontend React App -->
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon">⚛️</div>
+                    <div class="service-title">Frontend Application</div>
+                </div>
+                <div class="service-status">
+                    <div class="status-indicator" id="frontend-status"></div>
+                    <span id="frontend-status-text">Checking...</span>
+                </div>
+                <div class="service-url">
+                    <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>
+                </div>
+                <div class="service-description">
+                    React TypeScript application with Material-UI components and integrated chatbot interface.
+                </div>
+                <ul class="service-features">
+                    <li>Modern React 18 Interface</li>
+                    <li>Material-UI Components</li>
+                    <li>Floating Chatbot Widget</li>
+                    <li>Responsive Design</li>
+                    <li>TypeScript Support</li>
+                    <li>Real-time Data Display</li>
+                </ul>
+                <div class="action-buttons">
+                    <a href="http://localhost:3000" class="btn btn-primary" target="_blank">
+                        🚀 Launch App
+                    </a>
+                    <a href="http://localhost:3000/crop-calendar" class="btn btn-secondary" target="_blank">
+                        📅 Crop Calendar
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Chatbot Test Interface -->
+            <div class="service-card">
+                <div class="service-header">
+                    <div class="service-icon">🤖</div>
+                    <div class="service-title">Chatbot Test Interface</div>
+                </div>
+                <div class="service-status">
+                    <div class="status-indicator status-online"></div>
+                    <span>Always Available</span>
+                </div>
+                <div class="service-url">
+                    <a href="file:///c:/Users/himan/Hackathon/CropCalendar4.0/chatbot-test.html" target="_blank">chatbot-test.html</a>
+                </div>
+                <div class="service-description">
+                    Standalone chatbot testing interface for direct API communication and development testing.
+                </div>
+                <ul class="service-features">
+                    <li>Direct API Testing</li>
+                    <li>Intent Classification</li>
+                    <li>Conversation History</li>
+                    <li>Response Suggestions</li>
+                    <li>Error Handling Demo</li>
+                    <li>No Dependencies</li>
+                </ul>
+                <div class="action-buttons">
+                    <a href="file:///c:/Users/himan/Hackathon/CropCalendar4.0/chatbot-test.html" class="btn btn-primary" target="_blank">
+                        💬 Test Chatbot
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quick-links">
+            <h2>🔗 Quick Access Links</h2>
+            <div class="links-grid">
+                <a href="http://localhost:5000/api/crop-calendar" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">📅</span>
+                    Crop Calendar API
+                </a>
+                <a href="http://localhost:5000/api/weather" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">🌤️</span>
+                    Weather API
+                </a>
+                <a href="http://localhost:5000/api/mandi-data" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">📊</span>
+                    Mandi Data API
+                </a>
+                <a href="http://localhost:5000/api/pest-disease" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">🐛</span>
+                    Pest Disease API
+                </a>
+                <a href="http://localhost:5000/api/chatbot/message" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">💬</span>
+                    Chatbot API
+                </a>
+                <a href="http://localhost:3000/pest-disease-analysis" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">🔬</span>
+                    Disease Analysis
+                </a>
+                <a href="https://github.com/Himanshuv20/Agriguruv4" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">📦</span>
+                    GitHub Repository
+                </a>
+                <a href="file:///c:/Users/himan/Hackathon/CropCalendar4.0/CHATBOT_QUICKSTART.md" class="quick-link" target="_blank">
+                    <span class="quick-link-icon">📖</span>
+                    Documentation
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>AgriGuru 4.0</strong> - Intelligent Agricultural Advisory Platform</p>
+            <p>Developed with ❤️ for farmers and agricultural professionals</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">
+                Last Updated: August 4, 2025 | Status: <span id="overall-status">Checking...</span>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        async function checkService(url, statusElementId, textElementId) {
+            const statusElement = document.getElementById(statusElementId);
+            const textElement = document.getElementById(textElementId);
+            
+            try {
+                const response = await fetch(url, { 
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache'
+                });
+                
+                if (response.ok) {
+                    statusElement.className = 'status-indicator status-online';
+                    textElement.textContent = 'Online ✓';
+                    return true;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                statusElement.className = 'status-indicator status-offline';
+                textElement.textContent = 'Offline ✗';
+                return false;
+            }
+        }
+        
+        async function checkAllServices() {
+            const backendStatus = await checkService('http://localhost:5000', 'backend-status', 'backend-status-text');
+            const frontendStatus = await checkService('http://localhost:3000', 'frontend-status', 'frontend-status-text');
+            
+            const overallStatus = document.getElementById('overall-status');
+            if (backendStatus && frontendStatus) {
+                overallStatus.textContent = 'All Systems Online ✓';
+                overallStatus.style.color = '#4caf50';
+            } else if (backendStatus || frontendStatus) {
+                overallStatus.textContent = 'Partial Systems Online ⚠️';
+                overallStatus.style.color = '#ff9800';
+            } else {
+                overallStatus.textContent = 'Systems Offline ✗';
+                overallStatus.style.color = '#f44336';
+            }
+        }
+        
+        // Check services on page load
+        window.addEventListener('load', () => {
+            checkAllServices();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(checkAllServices, 30000);
+        });
+        
+        // Add click handlers for testing
+        document.querySelectorAll('a[href*="localhost"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Add a small delay to allow the click to register
+                setTimeout(() => {
+                    checkAllServices();
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

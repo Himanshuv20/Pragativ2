@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriGuru Chatbot Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+        
+        .user-message {
+            background: #2e7d32;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .bot-message {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            margin-right: auto;
+        }
+        
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-container input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .input-container input:focus {
+            border-color: #4caf50;
+        }
+        
+        .input-container button {
+            padding: 12px 24px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .input-container button:hover {
+            background: #1b5e20;
+        }
+        
+        .input-container button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 18px;
+            max-width: 70%;
+            margin-right: auto;
+        }
+        
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+        
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .suggestion {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #c8e6c9;
+        }
+        
+        .suggestion:hover {
+            background: #c8e6c9;
+        }
+        
+        .status {
+            padding: 10px 20px;
+            background: #e3f2fd;
+            color: #1976d2;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌾 AgriGuru AI Assistant</h1>
+            <p>Your intelligent farming companion with LLM integration</p>
+        </div>
+        
+        <div id="status" class="status">
+            Connecting to backend server...
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot-message">
+                <strong>🤖 AgriGuru:</strong> Hello! I'm your agricultural assistant. I can help you with:
+                <div class="suggestions">
+                    <span class="suggestion" onclick="sendMessage('Show me crop calendar for wheat')">Crop Calendar</span>
+                    <span class="suggestion" onclick="sendMessage('What is the weather forecast?')">Weather</span>
+                    <span class="suggestion" onclick="sendMessage('Current mandi prices')">Market Prices</span>
+                    <span class="suggestion" onclick="sendMessage('Soil analysis help')">Soil Analysis</span>
+                    <span class="suggestion" onclick="sendMessage('Plant disease identification')">Pest/Disease</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Ask me anything about farming..." 
+                   onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+        let isLoading = false;
+        
+        // Test backend connection on load
+        window.addEventListener('load', testConnection);
+        
+        async function testConnection() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/`);
+                if (response.ok) {
+                    document.getElementById('status').textContent = '✅ Connected to backend server';
+                    document.getElementById('status').className = 'status success';
+                } else {
+                    throw new Error('Server responded with error');
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = '❌ Cannot connect to backend server. Make sure it\'s running on port 5000.';
+                document.getElementById('status').className = 'status error';
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !isLoading) {
+                sendMessage();
+            }
+        }
+        
+        async function sendMessage(predefinedMessage) {
+            const messageInput = document.getElementById('messageInput');
+            const message = predefinedMessage || messageInput.value.trim();
+            
+            if (!message || isLoading) return;
+            
+            // Clear input if it was user typed
+            if (!predefinedMessage) {
+                messageInput.value = '';
+            }
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Show loading
+            showLoading();
+            isLoading = true;
+            document.getElementById('sendButton').disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/chatbot/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        userId: 'web-test-user',
+                        context: {
+                            location: {
+                                latitude: 28.6139,
+                                longitude: 77.2090
+                            },
+                            timestamp: new Date().toISOString()
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                hideLoading();
+                
+                if (data.success) {
+                    addMessage(data.response, 'bot', data.suggestions, data.intent);
+                } else {
+                    addMessage('Sorry, I encountered an error: ' + (data.error || 'Unknown error'), 'bot');
+                }
+                
+            } catch (error) {
+                hideLoading();
+                addMessage('Connection error: ' + error.message + '. Please check if the backend server is running.', 'bot');
+            } finally {
+                isLoading = false;
+                document.getElementById('sendButton').disabled = false;
+                messageInput.focus();
+            }
+        }
+        
+        function addMessage(text, sender, suggestions = [], intent = null) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            
+            let messageContent = `<strong>${sender === 'user' ? '👤 You' : '🤖 AgriGuru'}:</strong> ${text}`;
+            
+            if (intent) {
+                messageContent += `<br><small style="opacity: 0.7;">Intent: ${intent}</small>`;
+            }
+            
+            messageDiv.innerHTML = messageContent;
+            
+            // Add suggestions if available
+            if (suggestions && suggestions.length > 0) {
+                const suggestionsDiv = document.createElement('div');
+                suggestionsDiv.className = 'suggestions';
+                suggestionsDiv.style.marginTop = '10px';
+                
+                suggestions.forEach(suggestion => {
+                    const suggestionSpan = document.createElement('span');
+                    suggestionSpan.className = 'suggestion';
+                    suggestionSpan.textContent = suggestion;
+                    suggestionSpan.onclick = () => sendMessage(suggestion);
+                    suggestionsDiv.appendChild(suggestionSpan);
+                });
+                
+                messageDiv.appendChild(suggestionsDiv);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function showLoading() {
+            const chatContainer = document.getElementById('chatContainer');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'loading';
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.innerHTML = `
+                <strong>🤖 AgriGuru:</strong> 
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            `;
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function hideLoading() {
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+        }
+        
+        // Focus input on load
+        window.addEventListener('load', () => {
+            document.getElementById('messageInput').focus();
+        });
+    </script>
+</body>
+</html>

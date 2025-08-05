@@ -1,0 +1,959 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  TextField,
+  Button,
+  CircularProgress,
+  Alert,
+  Chip,
+  LinearProgress,
+  Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Autocomplete,
+  IconButton,
+  Tooltip,
+  Stack,
+  Avatar,
+  Badge,
+  Fade,
+  Zoom,
+  Grow,
+  CardActions,
+  useTheme
+} from '@mui/material';
+import {
+  LocationOn,
+  Satellite,
+  WaterDrop,
+  Science,
+  ThermostatAuto,
+  Nature,
+  Agriculture,
+  Search,
+  Refresh,
+  Warning,
+  CheckCircle,
+  Info,
+  ExpandMore,
+  MyLocation,
+  Timeline,
+  Assessment,
+  Layers,
+  Terrain,
+  FilterVintage,
+  Spa,
+  Park,
+  Grass,
+  LocalFlorist,
+  BubbleChart,
+  Analytics,
+  TrendingUp,
+  Insights,
+  Balance,
+  Opacity
+} from '@mui/icons-material';
+import { styled, alpha, keyframes } from '@mui/material/styles';
+import { soilAnalysisAPI } from '../services/soilAnalysisAPI';
+
+// Define interfaces
+interface LocationData {
+  latitude: string;
+  longitude: string;
+}
+
+interface SoilAnalysisData {
+  soilMoisture: number;
+  ndvi: number;
+  temperature: number;
+  ph: number;
+  healthScore: number;
+  confidence: number;
+  riskLevel: string;
+  recommendations: string[];
+  composition: {
+    sand: number;
+    clay: number;
+    silt: number;
+    organicMatter: number;
+  };
+}
+
+interface SoilAnalysisResult {
+  ndvi: number;
+  soilMoisture: number;
+  temperature: number;
+  ph: number;
+  riskLevel: string;
+  healthScore: number;
+  confidence: number;
+  recommendations: string[];
+  composition: {
+    sand: number;
+    silt: number;
+    clay: number;
+    organicMatter: number;
+  };
+}
+
+// Keyframe animations for organic movement
+const float = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+`;
+
+const pulse = keyframes`
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+`;
+
+const shimmer = keyframes`
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+`;
+
+// Styled components with agricultural theme
+const AgricultureContainer = styled(Container)(({ theme }) => ({
+  background: `
+    linear-gradient(135deg, 
+      ${alpha('#F1F8E9', 0.1)} 0%, 
+      ${alpha('#E8F5E8', 0.2)} 25%,
+      ${alpha('#C8E6C8', 0.1)} 50%,
+      ${alpha('#A5D6A7', 0.15)} 75%,
+      ${alpha('#81C784', 0.1)} 100%
+    ),
+    radial-gradient(circle at 20% 50%, ${alpha('#4CAF50', 0.05)} 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, ${alpha('#8BC34A', 0.05)} 0%, transparent 50%)
+  `,
+  minHeight: '100vh',
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(4),
+  position: 'relative',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '200px',
+    background: `
+      linear-gradient(
+        45deg,
+        transparent 30%,
+        ${alpha('#4CAF50', 0.02)} 70%
+      )
+    `,
+    pointerEvents: 'none',
+  }
+}));
+
+const HeroSection = styled(Box)(({ theme }) => ({
+  textAlign: 'center',
+  marginBottom: theme.spacing(6),
+  position: 'relative',
+  padding: theme.spacing(4, 0),
+  background: `
+    linear-gradient(135deg, 
+      ${alpha('#E8F5E8', 0.6)} 0%, 
+      ${alpha('#F1F8E9', 0.8)} 50%,
+      ${alpha('#E0F2F1', 0.6)} 100%
+    )
+  `,
+  borderRadius: theme.spacing(3),
+  boxShadow: `
+    0 8px 32px ${alpha('#4CAF50', 0.1)},
+    inset 0 1px 0 ${alpha('#FFFFFF', 0.8)}
+  `,
+  border: `1px solid ${alpha('#4CAF50', 0.1)}`,
+  overflow: 'hidden',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: '-50%',
+    left: '-50%',
+    width: '200%',
+    height: '200%',
+    background: `
+      radial-gradient(circle, 
+        ${alpha('#4CAF50', 0.03)} 0%, 
+        transparent 70%
+      )
+    `,
+    animation: `${float} 6s ease-in-out infinite`,
+    pointerEvents: 'none',
+  }
+}));
+
+const PrimaryTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 800,
+  background: `
+    linear-gradient(135deg, 
+      #2E7D32 0%, 
+      #388E3C 25%, 
+      #4CAF50 50%, 
+      #66BB6A 75%, 
+      #81C784 100%
+    )
+  `,
+  backgroundClip: 'text',
+  WebkitBackgroundClip: 'text',
+  WebkitTextFillColor: 'transparent',
+  textShadow: '0 2px 4px rgba(46, 125, 50, 0.1)',
+  letterSpacing: '-0.5px',
+  marginBottom: theme.spacing(2),
+  position: 'relative',
+  '&::after': {
+    content: '"🌱"',
+    position: 'absolute',
+    top: '-10px',
+    right: '-40px',
+    fontSize: '2rem',
+    animation: `${pulse} 3s ease-in-out infinite`,
+  }
+}));
+
+const SubtitleText = styled(Typography)(({ theme }) => ({
+  color: alpha('#2E7D32', 0.8),
+  fontWeight: 500,
+  lineHeight: 1.6,
+  maxWidth: '800px',
+  margin: '0 auto',
+  textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+}));
+
+const EarthCard = styled(Card)(({ theme }) => ({
+  background: `
+    linear-gradient(135deg, 
+      ${alpha('#E8F5E8', 0.95)} 0%, 
+      ${alpha('#F1F8E9', 0.98)} 50%,
+      ${alpha('#E0F2F1', 0.95)} 100%
+    )
+  `,
+  border: `2px solid ${alpha('#4CAF50', 0.2)}`,
+  borderRadius: theme.spacing(3),
+  transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+  position: 'relative',
+  overflow: 'hidden',
+  boxShadow: `
+    0 8px 40px ${alpha('#4CAF50', 0.12)},
+    0 2px 16px ${alpha('#4CAF50', 0.08)},
+    inset 0 1px 0 ${alpha('#FFFFFF', 0.9)}
+  `,
+  '&:hover': {
+    transform: 'translateY(-8px) scale(1.02)',
+    boxShadow: `
+      0 20px 60px ${alpha('#4CAF50', 0.18)},
+      0 8px 32px ${alpha('#4CAF50', 0.12)},
+      inset 0 1px 0 ${alpha('#FFFFFF', 0.9)}
+    `,
+    border: `2px solid ${alpha('#4CAF50', 0.4)}`,
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: `
+      linear-gradient(
+        90deg,
+        transparent,
+        ${alpha('#4CAF50', 0.05)},
+        transparent
+      )
+    `,
+    animation: `${shimmer} 3s infinite`,
+  }
+}));
+
+const MetricTile = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  textAlign: 'center',
+  background: `
+    linear-gradient(135deg, 
+      ${alpha('#FFFFFF', 0.95)} 0%, 
+      ${alpha('#F8F9FA', 0.98)} 50%,
+      ${alpha('#FFFFFF', 0.95)} 100%
+    )
+  `,
+  border: `1px solid ${alpha('#4CAF50', 0.1)}`,
+  borderRadius: theme.spacing(2.5),
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  position: 'relative',
+  overflow: 'hidden',
+  height: '200px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  '&:hover': {
+    borderColor: alpha('#4CAF50', 0.3),
+    boxShadow: `
+      0 12px 40px ${alpha('#4CAF50', 0.15)},
+      0 4px 16px ${alpha('#4CAF50', 0.08)}
+    `,
+    transform: 'translateY(-4px)',
+    '& .metric-icon': {
+      transform: 'scale(1.1) rotate(5deg)',
+    }
+  },
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '3px',
+    background: `linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50)`,
+    transform: 'scaleX(0)',
+    transition: 'transform 0.3s ease',
+  },
+  '&:hover::after': {
+    transform: 'scaleX(1)',
+  }
+}));
+
+const MetricIcon = styled(Avatar)(({ theme }) => ({
+  width: 64,
+  height: 64,
+  marginBottom: theme.spacing(2),
+  background: `linear-gradient(135deg, #4CAF50, #66BB6A)`,
+  boxShadow: `
+    0 4px 20px ${alpha('#4CAF50', 0.3)},
+    0 2px 8px ${alpha('#4CAF50', 0.2)}
+  `,
+  transition: 'all 0.3s ease',
+  '& .MuiSvgIcon-root': {
+    fontSize: '2rem',
+    color: '#FFFFFF',
+  }
+}));
+
+const NatureProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 12,
+  borderRadius: 6,
+  backgroundColor: alpha('#E0E0E0', 0.3),
+  '& .MuiLinearProgress-bar': {
+    borderRadius: 6,
+    background: `linear-gradient(90deg, #4CAF50, #8BC34A, #AED581)`,
+    position: 'relative',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: `
+        linear-gradient(
+          90deg,
+          transparent 30%,
+          ${alpha('#FFFFFF', 0.3)} 50%,
+          transparent 70%
+        )
+      `,
+      animation: `${shimmer} 2s infinite`,
+    }
+  }
+}));
+
+const OrganicChip = styled(Chip)(({ theme }) => ({
+  background: `linear-gradient(135deg, #4CAF50, #66BB6A)`,
+  color: '#FFFFFF',
+  fontWeight: 600,
+  border: `1px solid ${alpha('#FFFFFF', 0.2)}`,
+  boxShadow: `0 2px 8px ${alpha('#4CAF50', 0.3)}`,
+  '&:hover': {
+    background: `linear-gradient(135deg, #388E3C, #4CAF50)`,
+    transform: 'translateY(-1px)',
+    boxShadow: `0 4px 12px ${alpha('#4CAF50', 0.4)}`,
+  }
+}));
+
+const FloatingButton = styled(Button)(({ theme }) => ({
+  background: `
+    linear-gradient(135deg, 
+      #4CAF50 0%, 
+      #66BB6A 50%, 
+      #81C784 100%
+    )
+  `,
+  color: '#FFFFFF',
+  fontWeight: 600,
+  fontSize: '1.1rem',
+  padding: theme.spacing(1.5, 4),
+  borderRadius: theme.spacing(4),
+  textTransform: 'none',
+  border: `1px solid ${alpha('#FFFFFF', 0.2)}`,
+  boxShadow: `
+    0 8px 32px ${alpha('#4CAF50', 0.3)},
+    0 4px 16px ${alpha('#4CAF50', 0.2)},
+    inset 0 1px 0 ${alpha('#FFFFFF', 0.2)}
+  `,
+  transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+  position: 'relative',
+  overflow: 'hidden',
+  '&:hover': {
+    background: `
+      linear-gradient(135deg, 
+        #388E3C 0%, 
+        #4CAF50 50%, 
+        #66BB6A 100%
+      )
+    `,
+    transform: 'translateY(-3px) scale(1.05)',
+    boxShadow: `
+      0 12px 48px ${alpha('#4CAF50', 0.4)},
+      0 6px 24px ${alpha('#4CAF50', 0.3)},
+      inset 0 1px 0 ${alpha('#FFFFFF', 0.3)}
+    `,
+  },
+  '&:disabled': {
+    background: alpha('#BDBDBD', 0.3),
+    color: alpha('#757575', 0.7),
+    boxShadow: 'none',
+  },
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    left: '-100%',
+    width: '100%',
+    height: '100%',
+    background: `
+      linear-gradient(
+        90deg,
+        transparent,
+        ${alpha('#FFFFFF', 0.2)},
+        transparent
+      )
+    `,
+    transition: 'left 0.5s ease',
+  },
+  '&:hover::before': {
+    left: '100%',
+  }
+}));
+
+const NatureTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    background: alpha('#FFFFFF', 0.9),
+    borderRadius: theme.spacing(1.5),
+    transition: 'all 0.3s ease',
+    '& fieldset': {
+      borderColor: alpha('#4CAF50', 0.2),
+      borderWidth: '2px',
+    },
+    '&:hover fieldset': {
+      borderColor: alpha('#4CAF50', 0.4),
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#4CAF50',
+      boxShadow: `0 0 0 4px ${alpha('#4CAF50', 0.1)}`,
+    }
+  },
+  '& .MuiInputLabel-root': {
+    color: alpha('#2E7D32', 0.7),
+    fontWeight: 500,
+    '&.Mui-focused': {
+      color: '#4CAF50',
+    }
+  }
+}));
+
+const DataVisualizationCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  background: `
+    linear-gradient(135deg, 
+      ${alpha('#FFFFFF', 0.98)} 0%, 
+      ${alpha('#F8F9FA', 0.95)} 100%
+    )
+  `,
+  border: `1px solid ${alpha('#4CAF50', 0.1)}`,
+  borderRadius: theme.spacing(2),
+  boxShadow: `
+    0 4px 20px ${alpha('#4CAF50', 0.08)},
+    0 2px 8px ${alpha('#4CAF50', 0.04)}
+  `,
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    borderColor: alpha('#4CAF50', 0.2),
+    boxShadow: `
+      0 8px 32px ${alpha('#4CAF50', 0.12)},
+      0 4px 16px ${alpha('#4CAF50', 0.08)}
+    `,
+  }
+}));
+
+const ResultCard = styled(Accordion)(({ theme }) => ({
+  background: `
+    linear-gradient(135deg, 
+      ${alpha('#E8F5E8', 0.6)} 0%, 
+      ${alpha('#F1F8E9', 0.8)} 50%,
+      ${alpha('#E0F2F1', 0.6)} 100%
+    )
+  `,
+  border: `2px solid ${alpha('#4CAF50', 0.15)}`,
+  borderRadius: `${theme.spacing(2)} !important`,
+  marginBottom: `${theme.spacing(2)} !important`,
+  boxShadow: `
+    0 4px 20px ${alpha('#4CAF50', 0.1)} !important
+  `,
+  '&:hover': {
+    borderColor: alpha('#4CAF50', 0.25),
+  },
+  '&.Mui-expanded': {
+    boxShadow: `
+      0 8px 32px ${alpha('#4CAF50', 0.15)} !important
+    `,
+  },
+  '&::before': {
+    display: 'none',
+  }
+}));
+
+const SoilAnalysisPage: React.FC = () => {
+  // State management
+  const [location, setLocation] = useState<LocationData>({ latitude: '', longitude: '' });
+  const [citySearch, setCitySearch] = useState('');
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [analysisData, setAnalysisData] = useState<SoilAnalysisData | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | false>(false);
+
+  const theme = useTheme();
+
+  // Get current location
+  const getCurrentLocation = () => {
+    setIsLoading(true);
+    setError(null);
+
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by this browser');
+      setIsLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString()
+        });
+        setIsLoading(false);
+      },
+      (error) => {
+        setError('Unable to retrieve your location');
+        setIsLoading(false);
+      }
+    );
+  };
+
+  // Search locations with autocomplete
+  const searchLocations = async (query: string) => {
+    if (query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const results = await soilAnalysisAPI.searchLocations(query);
+      setSearchResults(results.data || []);
+    } catch (error) {
+      console.error('Location search failed:', error);
+      setSearchResults([]);
+    }
+  };
+
+  // Handle location selection
+  const handleLocationSelect = (selectedLocation: any) => {
+    setLocation({
+      latitude: selectedLocation.latitude.toString(),
+      longitude: selectedLocation.longitude.toString()
+    });
+    setCitySearch(selectedLocation.displayName || '');
+    setSearchResults([]);
+  };
+
+  // Perform soil analysis
+  const performAnalysis = async () => {
+    if (!location.latitude || !location.longitude) {
+      setError('Please provide valid coordinates or search for a location');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setAnalysisData(null);
+
+    try {
+      const response = await soilAnalysisAPI.analyzeSoil({
+        latitude: parseFloat(location.latitude),
+        longitude: parseFloat(location.longitude),
+        date: selectedDate
+      });
+
+      if (response.success) {
+        setAnalysisData(response.data);
+        setExpandedSection('overview');
+      } else {
+        throw new Error('Analysis failed');
+      }
+    } catch (error: any) {
+      setError(error.message || 'Failed to analyze soil conditions');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle accordion expansion
+  const handleAccordionChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedSection(isExpanded ? panel : false);
+  };
+
+  // Format confidence color
+  const getConfidenceColor = (confidence: number) => {
+    if (confidence >= 80) return '#4CAF50';
+    if (confidence >= 60) return '#FF9800';
+    return '#F44336';
+  };
+
+  // Format health score color
+  const getHealthScoreColor = (score: number) => {
+    if (score >= 80) return '#4CAF50';
+    if (score >= 60) return '#8BC34A';
+    if (score >= 40) return '#FF9800';
+    return '#F44336';
+  };
+
+  return (
+    <AgricultureContainer maxWidth="xl">
+      {/* Hero Section */}
+      <HeroSection>
+        <PrimaryTitle variant="h2" component="h1">
+          Advanced Soil Intelligence
+        </PrimaryTitle>
+        <SubtitleText variant="h5">
+          Harness the power of satellite technology for precision agriculture insights
+        </SubtitleText>
+      </HeroSection>
+
+      {/* Location Input Section */}
+      <EarthCard sx={{ mb: 4 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LocationOn color="primary" />
+            Location Selection
+          </Typography>
+          
+          <Grid container spacing={3} alignItems="center">
+            <Grid xs={12} md={4}>
+              <Autocomplete
+                freeSolo
+                options={searchResults}
+                getOptionLabel={(option: any) => option.displayName || option}
+                onInputChange={(event, newValue) => {
+                  setCitySearch(newValue);
+                  searchLocations(newValue);
+                }}
+                onChange={(event, selectedValue) => {
+                  if (selectedValue && typeof selectedValue === 'object') {
+                    handleLocationSelect(selectedValue);
+                  }
+                }}
+                renderInput={(params) => (
+                  <NatureTextField
+                    {...params}
+                    label="Search City/Location"
+                    variant="outlined"
+                    fullWidth
+                    InputProps={{
+                      ...params.InputProps,
+                      startAdornment: <Search color="action" sx={{ mr: 1 }} />,
+                    }}
+                  />
+                )}
+                renderOption={(props, option) => (
+                  <Box component="li" {...props}>
+                    <Box>
+                      <Typography variant="body2" fontWeight="bold">
+                        {option.city || option.displayName?.split(',')[0]}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {option.state}, {option.country}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+              />
+            </Grid>
+            
+            <Grid xs={12} md={3}>
+              <NatureTextField
+                label="Latitude"
+                variant="outlined"
+                fullWidth
+                value={location.latitude}
+                onChange={(e) => setLocation({ ...location, latitude: e.target.value })}
+                type="number"
+                inputProps={{ step: "any", min: -90, max: 90 }}
+              />
+            </Grid>
+            
+            <Grid xs={12} md={3}>
+              <NatureTextField
+                label="Longitude"
+                variant="outlined"
+                fullWidth
+                value={location.longitude}
+                onChange={(e) => setLocation({ ...location, longitude: e.target.value })}
+                type="number"
+                inputProps={{ step: "any", min: -180, max: 180 }}
+              />
+            </Grid>
+            
+            <Grid xs={12} md={2}>
+              <Tooltip title="Get Current Location">
+                <IconButton 
+                  onClick={getCurrentLocation}
+                  disabled={isLoading}
+                  sx={{ 
+                    bgcolor: 'primary.main',
+                    color: 'white',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }}
+                >
+                  <MyLocation />
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          </Grid>
+
+          <Box sx={{ mt: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
+            <NatureTextField
+              label="Analysis Date"
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              sx={{ minWidth: 200 }}
+              InputLabelProps={{ shrink: true }}
+            />
+            
+            <FloatingButton
+              onClick={performAnalysis}
+              disabled={isLoading || !location.latitude || !location.longitude}
+              startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : <Satellite />}
+              size="large"
+            >
+              {isLoading ? 'Analyzing...' : 'Analyze Soil'}
+            </FloatingButton>
+          </Box>
+        </CardContent>
+      </EarthCard>
+
+      {/* Error Display */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 4 }}>
+          {error}
+        </Alert>
+      )}
+
+      {/* Analysis Results */}
+      {analysisData && (
+        <Box>
+          {/* Metrics Overview */}
+          <Typography variant="h5" sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Assessment color="primary" />
+            Soil Health Metrics
+          </Typography>
+          
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Grid xs={12} sm={6} md={3}>
+              <MetricTile>
+                <MetricIcon className="metric-icon">
+                  <WaterDrop />
+                </MetricIcon>
+                <Typography variant="h4" fontWeight="bold" color="primary">
+                  {analysisData.soilMoisture.toFixed(1)}%
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Soil Moisture
+                </Typography>
+                <NatureProgress variant="determinate" value={analysisData.soilMoisture} sx={{ mt: 2, width: '100%' }} />
+              </MetricTile>
+            </Grid>
+            
+            <Grid xs={12} sm={6} md={3}>
+              <MetricTile>
+                <MetricIcon className="metric-icon">
+                  <Grass />
+                </MetricIcon>
+                <Typography variant="h4" fontWeight="bold" color="primary">
+                  {analysisData.ndvi.toFixed(2)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  NDVI Index
+                </Typography>
+                <NatureProgress variant="determinate" value={analysisData.ndvi * 100} sx={{ mt: 2, width: '100%' }} />
+              </MetricTile>
+            </Grid>
+            
+            <Grid xs={12} sm={6} md={3}>
+              <MetricTile>
+                <MetricIcon className="metric-icon">
+                  <ThermostatAuto />
+                </MetricIcon>
+                <Typography variant="h4" fontWeight="bold" color="primary">
+                  {analysisData.temperature.toFixed(1)}°C
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Temperature
+                </Typography>
+                <NatureProgress variant="determinate" value={(analysisData.temperature + 10) * 2.5} sx={{ mt: 2, width: '100%' }} />
+              </MetricTile>
+            </Grid>
+            
+            <Grid xs={12} sm={6} md={3}>
+              <MetricTile>
+                <MetricIcon className="metric-icon">
+                  <Science />
+                </MetricIcon>
+                <Typography variant="h4" fontWeight="bold" color="primary">
+                  {analysisData.ph.toFixed(1)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  pH Level
+                </Typography>
+                <NatureProgress variant="determinate" value={(analysisData.ph / 14) * 100} sx={{ mt: 2, width: '100%' }} />
+              </MetricTile>
+            </Grid>
+          </Grid>
+
+          {/* Detailed Analysis */}
+          <Box sx={{ mb: 4 }}>
+            <Grid container spacing={3}>
+              <Grid xs={12} md={6}>
+                <DataVisualizationCard>
+                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Analytics color="primary" />
+                    Health Score
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <LinearProgress 
+                        variant="determinate" 
+                        value={analysisData.healthScore} 
+                        sx={{ 
+                          height: 20, 
+                          borderRadius: 10,
+                          bgcolor: alpha('#E0E0E0', 0.3),
+                          '& .MuiLinearProgress-bar': {
+                            bgcolor: getHealthScoreColor(analysisData.healthScore),
+                            borderRadius: 10,
+                          }
+                        }} 
+                      />
+                    </Box>
+                    <Typography variant="h6" fontWeight="bold">
+                      {analysisData.healthScore}/100
+                    </Typography>
+                  </Box>
+                  <Box sx={{ mt: 2 }}>
+                    <OrganicChip 
+                      label={analysisData.riskLevel} 
+                      size="small"
+                      sx={{ 
+                        bgcolor: getHealthScoreColor(analysisData.healthScore),
+                        color: 'white'
+                      }}
+                    />
+                  </Box>
+                </DataVisualizationCard>
+              </Grid>
+              
+              <Grid xs={12} md={6}>
+                <DataVisualizationCard>
+                  <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Layers color="primary" />
+                    Soil Composition
+                  </Typography>
+                  <Stack spacing={2} sx={{ mt: 2 }}>
+                    {[
+                      { label: 'Sand', value: analysisData.composition.sand, color: '#FFEB3B' },
+                      { label: 'Clay', value: analysisData.composition.clay, color: '#795548' },
+                      { label: 'Silt', value: analysisData.composition.silt, color: '#9E9E9E' },
+                      { label: 'Organic Matter', value: analysisData.composition.organicMatter, color: '#4CAF50' }
+                    ].map((item) => (
+                      <Box key={item.label}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                          <Typography variant="body2">{item.label}</Typography>
+                          <Typography variant="body2" fontWeight="bold">{item.value}%</Typography>
+                        </Box>
+                        <LinearProgress
+                          variant="determinate"
+                          value={item.value}
+                          sx={{
+                            height: 8,
+                            borderRadius: 4,
+                            bgcolor: alpha('#E0E0E0', 0.3),
+                            '& .MuiLinearProgress-bar': {
+                              bgcolor: item.color,
+                              borderRadius: 4,
+                            }
+                          }}
+                        />
+                      </Box>
+                    ))}
+                  </Stack>
+                </DataVisualizationCard>
+              </Grid>
+            </Grid>
+          </Box>
+
+          {/* Recommendations */}
+          <ResultCard 
+            expanded={expandedSection === 'recommendations'}
+            onChange={handleAccordionChange('recommendations')}
+          >
+            <AccordionSummary expandIcon={<ExpandMore />}>
+              <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <LocalFlorist color="primary" />
+                Agricultural Recommendations
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <List>
+                {analysisData.recommendations.map((recommendation, index) => (
+                  <ListItem key={index}>
+                    <ListItemIcon>
+                      <CheckCircle color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary={recommendation} />
+                  </ListItem>
+                ))}
+              </List>
+            </AccordionDetails>
+          </ResultCard>
+        </Box>
+      )}
+    </AgricultureContainer>
+  );
+};
+
+export default SoilAnalysisPage;

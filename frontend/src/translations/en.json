@@ -1,0 +1,323 @@
+{
+  "nav": {
+    "home": "Home",
+    "cropCalendar": "Crop Calendar",
+    "weather": "Weather",
+    "soilTest": "Soil Test",
+    "mandiData": "Mandi Data",
+    "governmentSchemes": "Government Schemes",
+    "debtCounseling": "Debt Counseling",
+    "sustainablePractices": "Sustainable Practices",
+    "sosEmergency": "SOS Emergency",
+    "chatbot": "AI Assistant",
+    "language": "Language",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "home": {
+    "title": "PRAGATI.ai",
+    "subtitle": "",
+    "heroTitle": "Transform Your Farming with Smart Technology",
+    "heroSubtitle": "",
+    "getStarted": "Get Started with PRAGATI.ai",
+    "smartFarmingTools": "🚀 Smart Farming Tools",
+    "whyChoose": "Why Choose PRAGATI.ai?",
+    "readyToTransform": "🚀 Ready to Transform Your Farming?",
+    "joinThousands": "Join thousands of farmers using smart technology to boost their harvest and reduce costs",
+    "startSmartFarming": "Start Smart Farming",
+    "checkWeather": "Check Weather",
+    "trustedBy": "Trusted by farmers worldwide"
+  },
+  "features": {
+    "aiPowered": "🤖 AI-Powered Analytics",
+    "aiDescription": "Advanced machine learning algorithms analyze satellite data, weather patterns, and historical trends for intelligent farming decisions.",
+    "marketIntelligence": "📊 Smart Market Intelligence",
+    "marketDescription": "Real-time mandi prices, demand forecasting, and optimal selling strategies to maximize your agricultural profits.",
+    "financialAdvisory": "💰 Financial Advisory",
+    "financialDescription": "Comprehensive debt counseling, loan guidance, and financial planning tailored for agricultural enterprises.",
+    "satelliteIntegration": "🛰️ Satellite Integration",
+    "satelliteDescription": "Access to real-time satellite imagery, vegetation indices, and soil moisture data for precision agriculture.",
+    "sustainability": "🌿 Sustainability Focus",
+    "sustainabilityDescription": "Eco-friendly farming practices, carbon footprint tracking, and sustainable resource management solutions.",
+    "emergencySupport": "🚨 24/7 Emergency Support",
+    "emergencyDescription": "Round-the-clock agricultural emergency assistance and expert consultation for critical farming situations."
+  },
+  "modules": {
+    "cropCalendar": {
+      "title": "Crop Calendar",
+      "subtitle": "AI-powered planning with satellite data"
+    },
+    "weather": {
+      "title": "Weather",
+      "subtitle": "Real-time conditions & forecasts"
+    },
+    "mandiData": {
+      "title": "Mandi Data",
+      "subtitle": "Live market prices & analytics"
+    },
+    "governmentSchemes": {
+      "title": "Government Schemes",
+      "subtitle": "Agricultural support & benefits"
+    },
+    "soilAnalysis": {
+      "title": "Soil Analysis",
+      "subtitle": "Satellite-based soil monitoring"
+    },
+    "soilTestBooking": {
+      "title": "Soil Test Booking",
+      "subtitle": "Book lab tests for soil health"
+    },
+    "sustainablePractices": {
+      "title": "Sustainable Practices",
+      "subtitle": "Eco-friendly farming methods"
+    },
+    "debtCounseling": {
+      "title": "Debt Counseling",
+      "subtitle": "Smart financial management"
+    },
+    "sosEmergency": {
+      "title": "SOS Emergency",
+      "subtitle": "Instant agricultural assistance"
+    },
+    "aiAssistant": {
+      "title": "AI Assistant",
+      "subtitle": "Smart agricultural chatbot"
+    },
+    "pestDisease": {
+      "title": "Pest & Disease Analysis",
+      "subtitle": "AI-powered crop health detection"
+    }
+  },
+  "pestDisease": {
+    "title": "Pest & Disease Analysis",
+    "subtitle": "AI-powered crop health detection",
+    "pageTitle": "🐛 Pest & Disease Analysis",
+    "pageSubtitle": "Upload plant images for AI-powered diagnosis and treatment recommendations",
+    "uploadSection": {
+      "title": "📸 Upload Plant Image",
+      "clickToUpload": "Click to upload plant image",
+      "supportedFormats": "Supports JPG, PNG, WebP (max 10MB)",
+      "imageReady": "Image ready for analysis",
+      "analyzing": "Analyzing...",
+      "analyzeButton": "🔍 Analyze Image"
+    },
+    "resultsSection": {
+      "title": "🔬 Analysis Results",
+      "noResults": "Upload an image to see analysis results",
+      "confidence": "confidence",
+      "severity": {
+        "low": "Low Risk",
+        "medium": "Medium Risk", 
+        "high": "High Risk"
+      },
+      "treatments": "🩺 Treatment Recommendations",
+      "prevention": "🛡️ Prevention Tips"
+    },
+    "tips": {
+      "title": "📋 Photography Tips for Better Analysis",
+      "goodLighting": {
+        "title": "Good Lighting",
+        "description": "Take photos in natural daylight for clear visibility"
+      },
+      "clearFocus": {
+        "title": "Clear Focus",
+        "description": "Ensure the affected area is in sharp focus"
+      },
+      "closeUpShots": {
+        "title": "Close-up Shots",
+        "description": "Capture detailed shots of symptoms and affected areas"
+      },
+      "multipleAngles": {
+        "title": "Multiple Angles",
+        "description": "Take photos from different angles for comprehensive analysis"
+      }
+    },
+    "errors": {
+      "fileSizeLimit": "File size must be less than 10MB",
+      "invalidFormat": "Please upload a valid image file (JPG, PNG, WebP)",
+      "analysisFailedUpload": "Failed to upload image for analysis",
+      "analysisFailedGeneral": "Analysis failed. Please try again"
+    }
+  },
+  "cropCalendar": {
+    "steps": {
+      "location": "Select Location",
+      "crop": "Choose Crop",
+      "area": "Enter Area",
+      "calendar": "View Calendar"
+    },
+    "title": "Crop Calendar Generator",
+    "subtitle": "Create personalized farming schedules with AI-powered insights",
+    "generating": "Generating...",
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "generate": "Generate Calendar",
+      "tryAgain": "Try Again"
+    },
+    "errors": {
+      "loadingCrops": "Error loading supported crops",
+      "generating": "Error generating crop calendar"
+    }
+  },
+  "weather": {
+    "title": "Weather Forecast",
+    "subtitle": "Real-time weather conditions and forecasts",
+    "current": "Current Weather",
+    "forecast": "7-Day Forecast",
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "windSpeed": "Wind Speed",
+    "feelsLike": "Feels Like",
+    "visibility": "Visibility",
+    "loadingWeatherData": "Loading Weather Data...",
+    "gettingLatestInfo": "Getting latest weather information for your location"
+  },
+  "language": {
+    "selectLanguage": "Select Language",
+    "languagePreference": "Language Preference",
+    "chooseLanguage": "Choose Language",
+    "selectPreferred": "Select your preferred language for the agricultural assistant",
+    "translationPowered": "🌐 AI translation powered by Google Translate for accurate agricultural terms",
+    "close": "Close"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "apply": "Apply",
+    "close": "Close",
+    "open": "Open",
+    "select": "Select",
+    "choose": "Choose",
+    "new": "NEW",
+    "live": "LIVE"
+  },
+  "trust": {
+    "rating": "⭐ 4.9/5 Rating",
+    "countries": "🌍 50+ Countries",
+    "mobileReady": "📱 Mobile Ready"
+  },
+  "stats": {
+    "dataSources": "Data Sources",
+    "dataSourcesValue": "Live",
+    "cropTypes": "Crop Types",
+    "cropTypesValue": "50+",
+    "aiPowered": "AI Powered",
+    "aiPoweredValue": "Smart"
+  },
+  "cropSelection": {
+    "title": "Choose Your Crop",
+    "subtitle": "Select from our supported crops to receive a personalized satellite-informed calendar including optimal planting and harvesting times.",
+    "growth": "Growth Period",
+    "season": "Season",
+    "greatChoice": "Great Choice!",
+    "selected": "Selected",
+    "successMessage": "You've selected {{crop}} for your crop calendar. Our satellite-powered system will generate personalized planting, fertilization, and harvesting schedules based on your location and current growing conditions."
+  },
+  "crops": {
+    "wheat": {
+      "emoji": "🌾",
+      "description": "Hardy cereal grain ideal for temperate climates",
+      "growthPeriod": "90-120 days",
+      "season": "Winter/Spring",
+      "char1": "Drought tolerant",
+      "char2": "Cold resistant",
+      "char3": "High yield potential"
+    },
+    "rice": {
+      "emoji": "🍚",
+      "description": "Primary grain requiring flooded conditions",
+      "growthPeriod": "100-130 days",
+      "season": "Summer",
+      "char1": "Water intensive",
+      "char2": "High nutrition",
+      "char3": "Multiple varieties"
+    },
+    "maize": {
+      "emoji": "🌽",
+      "description": "Versatile grain with high energy content",
+      "growthPeriod": "80-110 days",
+      "season": "Summer",
+      "char1": "Heat loving",
+      "char2": "Fast growing",
+      "char3": "High yield"
+    },
+    "tomato": {
+      "emoji": "🍅",
+      "description": "Popular fruit vegetable rich in nutrients",
+      "growthPeriod": "70-90 days",
+      "season": "Summer",
+      "char1": "Heat sensitive",
+      "char2": "Disease prone",
+      "char3": "High value"
+    },
+    "potato": {
+      "emoji": "🥔",
+      "description": "Underground tuber crop with global importance",
+      "growthPeriod": "90-120 days",
+      "season": "Spring/Fall",
+      "char1": "Cool weather",
+      "char2": "Storage friendly",
+      "char3": "Versatile use"
+    },
+    "soybean": {
+      "emoji": "🫘",
+      "description": "High protein legume with nitrogen fixation ability",
+      "growthPeriod": "90-110 days",
+      "season": "Spring/Summer",
+      "char1": "Nitrogen fixing",
+      "char2": "High protein",
+      "char3": "Soil improver"
+    },
+    "cotton": {
+      "emoji": "☁️",
+      "description": "Primary fiber crop for textile production",
+      "growthPeriod": "140-160 days",
+      "season": "Spring/Summer",
+      "char1": "Heat loving",
+      "char2": "Long season",
+      "char3": "High value"
+    },
+    "sunflower": {
+      "emoji": "🌻",
+      "description": "Bright oilseed with large flower head",
+      "growthPeriod": "100-120 days",
+      "season": "Spring/Summer",
+      "char1": "Drought tolerant",
+      "char2": "Pollinator friendly",
+      "char3": "Oil production"
+    },
+    "barley": {
+      "emoji": "🍺",
+      "description": "Versatile grain for food, feed, and brewing",
+      "growthPeriod": "90-110 days",
+      "season": "Winter/Spring",
+      "char1": "Cold tolerant",
+      "char2": "Early maturing",
+      "char3": "Multiple uses"
+    },
+    "canola": {
+      "emoji": "🌼",
+      "description": "Cool-season oilseed with bright yellow flowers",
+      "growthPeriod": "120-140 days",
+      "season": "Fall/Spring",
+      "char1": "Cool weather",
+      "char2": "Oil rich",
+      "char3": "Rotation crop"
+    }
+  }
+}
